@@ -17,18 +17,35 @@
 % result in the conventional \TeX{} control sequences:
 %    \begin{macrocode}
 %<*style>
+%
+%%
+%% TeX hints:
+%%   - @ is considered a normal letter in packages and classes
+%%   - There are 256 32Bit \count<num> registers (i. e. \count0=42),
+%%     can be expanded with \the<register> (i.e. \the\count0) 
+%%   - \relax ends scanning for tokens
+%%     (i.e. \count0=\macro 42 <> \count0=\macro\relax 42) 
+%%   - A macro defined with can has a maximum of 9 arguments
+%%   - \gdef is shortcut for \global\def
+%%     \xdef is shortcut for \global\edef
+%%   - \string<\macro> returns the "macro" (the name of a macro)
+%%
 %% locally define the macro \fileversion (no parameters, replacement: v1.00)
 \def\fileversion{v1.00}
 %% Make clear what LaTeX version is needed: LaTeX2e
 \NeedsTeXFormat{LaTeX2e}
+%% Now define localy (visible in scope) a RCS (revision control system)
+%% parser macro and define out of this global varibles like filename, etc.
 {\def\RCS#1#2\endRCS{%
+%% is the first parameter a "$%?
   \ifx$#1%
     \@RCS $#2 \endRCS
   \else
     \@RCS $*: #1#2$ \endRCS
   \fi}%
  \def\@RCS $#1: #2,v #3 #4 #5 #6 #7$ \endRCS{%
-   %% global defines of file attributes (http://en.wikibooks.org/wiki/TeX/gdef)
+%% global defines (independent of current scope) of file attributes
+%% (http://en.wikibooks.org/wiki/TeX/gdef)
    \gdef\filename{#2}%
    \gdef\filerevision{#3}%
    \gdef\filedate{#4}%
@@ -43,8 +60,11 @@
 %    \end{macrocode}
 % Every option we don't understand is sent down to |graphics|:
 %    \begin{macrocode}
+%% Every option ("*") is passed down to the graphics package
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{graphics}}
-\ProcessOptions
+%% Call the actual code for each found and declared opton.
+%% Stop scanning for tokens afterwards.
+\ProcessOptions\relax
 \RequirePackage{graphics}[1994/12/15]
 \RequirePackage{verbatim}
 %    \end{macrocode}
@@ -55,12 +75,13 @@
 %    \begin{macrocode}
 %% define the % sign as a common letter (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_TeX_Primitiven:_%5Ccatcode)
 %% and globally (but through the @ only visible inside the package (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_@))
-%% define a percent sign macro (probably not needed in esk)
+%% define a percent sign macro (probably used for comments, TODO: Sketch allows also #-Comments)
 {\catcode`\%=11\gdef\p@rcent{%}}
+%% define a macro to write to a file specified by #1
 \def\eskwrite#1{%
-  %% is the variable "eskio" set?
+  %% is the variable "@eskio" set?
   \if@eskio
-    %% write the contents of "\@outemp" immediately, instead of waiting for shipout (http://www.tug.org/utilities/plain/cseq.html#immediate-rp)
+    %% write the contents of "#1" immediately, instead of waiting for shipout (http://www.tug.org/utilities/plain/cseq.html#immediate-rp)
     %% where to write is stored in "\@outemp" (http://www.tug.org/utilities/plain/cseq.html#write-rp)
     \immediate\write\@outemp{#1}%
   \fi
@@ -71,7 +92,8 @@
 \newif\if@eskio
 %% ...and set it to true
 \@eskiotrue
-%% define the next free file number (in range 0-15) to private macro "\@outemp"
+%% define the next free file number (in range 0-15) to private macro "\@outemp",
+%% but do not open it (exampla file open: \openout\@outemp=TEXTFILE.TXT)
 %% see: (http://books.google.de/books?id=bXLDwmIJNkUC&pg=PA283&lpg=PA283&dq=tex+%22\newwrite%22&source=bl&ots=xNXas4Y6Rz&sig=KrxZPqhl_0izHGvda9235RoyTHU&hl=de&ei=tKKGSszRGML6_AaNgaGWBw&sa=X&oi=book_result&ct=result&resnum=10#v=onepage&q=tex%20%22\newwrite%22&f=false)
 \newwrite\@outemp
 %    \end{macrocode}
@@ -82,7 +104,7 @@
 
 % \begin{macro}{\empfile}
 % This environment encloses each Sketch input file.  The single optional
-% argument gives the name of the file.
+% argument gives the name of the file and defaults to |\jobname|.
 %    \begin{macrocode}
 \newcommand{\eskfile}[1][\jobname]{%
   \def\theeskfile{#1}%
@@ -90,19 +112,26 @@
 % Open the Sketch file.  If we're running under AMS-\LaTeX, turn off
 % I/O during the first pass over equation environments.
 %    \begin{macrocode}
+  %% Is @eskio true?
   \if@eskio
+    %% Is "ifmeasuring@" undefined?
     \@ifundefined{ifmeasuring@}%
       {}%
       {\def\if@eskio{\ifmeasuring@\else}}%
+    %% Assign a new output file (our "\theeskfile") to our "@outemp" file number
     \immediate\openout\@outemp=\theeskfile.sk\relax
+    %% And write "%%% <\theeskfile>.sk -- % do not edit, ..." out immediately
     \eskwrite{\p@rcent\p@rcent\p@rcent\space \theeskfile.sk -- %
               do not edit, generated automatically by \jobname.tex}%
 %    \end{macrocode}
 % append |\begin{document}| to a non-empty |\LaTeX| prelude and write
 % it out:
-%    \begin{macrocode}
+% \begin{macrocode}
     \expandafter\ifx\expandafter*\the\esk@TeX*\else
+      %% Append "\begin{document}" on a new line to \esk@TeX token register...
       \esk@TeX=\expandafter{\the\esk@TeX^^J\begin{document}}%
+      %% ...and write it out - a line with "verbatimtex" prepended
+      %% and  a line "etex;" appended
       \eskwrite{verbatimtex^^J\the\esk@TeX^^Jetex;}%
     \fi
     \expandafter\ifx\expandafter*\the\esk@prelude*\else
@@ -112,22 +141,35 @@
 %    \end{macrocode}
 % Count the figures
 %    \begin{macrocode}
+  %% Assign 0 to the counter "eskfig"
   \setcounter{eskfig}{0}}
+%% Redefine \theeskfile with \relax
 \let\theeskfile\relax
+%% Define a new counter "eskfig" (initialized with 0)
 \newcounter{eskfig}
 %    \end{macrocode}
 % Standard preludes:
 %    \begin{macrocode}
+%% Create a new symbolic token register name "\esk@TeX"
+%% If the indirct alias creation \newtoks is used, TeX selects a
+%% register to take and hides this technical detail from us.
 \newtoks\esk@TeX
+%% Switch for \@ptsize, which has to be a number
+%% The token register \esk@TeX is initialized with a \documentclass macro
 \ifcase\@ptsize
+  %% \@ptsize == 0
   \esk@TeX={\documentclass[10pt]{article}}
 \or
+  %% \@ptsize == 1
   \esk@TeX={\documentclass[11pt]{article}}
 \or
+  %% \@ptsize == 2
   \esk@TeX={\documentclass[12pt]{article}}
 \else
+  %% \@ptsize in all other cases
   \esk@TeX={\documentclass{article}}
 \fi
+%% Again, create a new token register alias "\esk@prelude"
 \newtoks\esk@prelude
 %    \end{macrocode}
 % \end{macro}
@@ -137,9 +179,18 @@
 %     \begin{macro}{\eskprelude}
 %       \begin{macro}{\eskaddtoprelude}
 %    \begin{macrocode}
+%% define a public "\eskTeX" macro that fills the \esk@TeX
+%% token register with its argument (#1) - thus, overrides it
 \def\eskTeX#1{\esk@TeX={#1}}
+%% defines a public "\eskadddtTeX macro that appends its argument
+%% to the token register \esk@TeX on a new line. ^^J is a replacement ascii
+%% representation for LF or line feed" (http://www.torsten-horn.de/techdocs/ascii.htm)
 \def\eskaddtoTeX#1{\esk@TeX=\expandafter{\the\esk@TeX^^J#1}}
+%% define a public \eskprelude macro that stores its replaces the
+%% contents fo the internal token register \esk@prelude with its argument
 \def\eskprelude#1{\esk@prelude={#1}}
+%% define a public \eskaddtoprelude macro that appends its argument
+%% to the internal \esk@prelude token register on a new line
 \def\eskaddtoprelude#1{\esk@prelude=\expandafter{\the\esk@prelude^^J#1}}
 %    \end{macrocode}
 %       \end{macro}
@@ -157,7 +208,10 @@
   \eskwrite{\p@rcent\p@rcent\p@rcent\space the end.^^J%
             end.^^J%
             endinput;}%
+  %% Like in intialization, let "\theeskfile" be the same as "\relax"
+  %% This an indicator of being outside of an eskfile environment.
   \let\theeskfile\relax
+  %% if a file is opened, close it.
   \if@eskio
     \immediate\closeout\@outemp
   \fi}
@@ -166,6 +220,8 @@
 %
 % \begin{macro}{\esk}
 %    \begin{macrocode}
+%% define a public macro to (re-)define "\esk@@name" with the argument
+%% and call internal \esk@
 \newcommand{\esk}[1][*]{%
   \def\esk@@name{#1}%
   \esk@}
@@ -202,15 +258,18 @@
 % \end{macro}
 %
 % \begin{macro}{\esk@checkfile}
-% Make sure that a Swetch file is open, otherwise \emph{really}
+% Make sure that a Sketch file is open, otherwise \emph{really}
 % obscure error messages are possible:
 %    \begin{macrocode}
 \def\esk@checkfile{%
+  %% check if "\theeskfile" is the same as "\relax" (as defined for
+  %% initialization). If so, print and produce error.
   \ifx\theskfile\relax
     \errhelp={Outside a empfile environment, I have no clue as to where^^J%
               the Sketch commands should go.   I will use eskdefault.sk^^J%
               for this graph, but you'd better fix your code!}%
-    \errmessage{I detected a esk environment outside of eskfile}%
+    \errmessage{I detected an esk environment outside of eskfile}%
+    %% begin a new esk file
     \eskfile[eskdefault]
   \fi}
 %    \end{macrocode}
@@ -219,6 +278,7 @@
 % \begin{macro}{\esk@includegraphics}
 %    \begin{macrocode}
 \def\esk@includegraphics#1#2{%
+  %% switch from vertical to horizontal mode
   \leavevmode
   \IfFileExists{#1.#2}%
     {\includegraphics{#1.#2}}%
@@ -353,7 +413,7 @@
 % Protect against certain obsolete versions of the |graphics| package:
 %    \begin{macrocode}
 \usepackage{graphics}[1994/12/15]
-\usepackage{emp}
+\usepackage{esk}
 %    \end{macrocode}
 %    \begin{macrocode}
 \setlength{\parindent}{0pt}
@@ -387,7 +447,7 @@
 \let\origmacrocode\macrocode
 \def\macrocode{\hfuzz 5em\origmacrocode}
 \begin{document}
-  \DocInput{emp.dtx}
+  \DocInput{esk.dtx}
 \end{document}
 %</driver>
 %    \end{macrocode}
