@@ -112,7 +112,7 @@
 % Open the Sketch file.  If we're running under AMS-\LaTeX, turn off
 % I/O during the first pass over equation environments.
 %    \begin{macrocode}
-  %% Is @eskio true?
+  %% Is @eskio set/true?
   \if@eskio
     %% Is "ifmeasuring@" undefined?
     \@ifundefined{ifmeasuring@}%
@@ -127,13 +127,19 @@
 % append |\begin{document}| to a non-empty |\LaTeX| prelude and write
 % it out:
 % \begin{macrocode}
+    %% if "\esk@TeX" token register is empty, "\the\..." will be replaced by
+    %% an empty sting and "\ifx" will yield in true (because * equals *), and the
+    %% "\else" branch which actually appends "\begin..." will _not_ be called.
+    %% If the token register is not empty (and does not start with an asterisk)
+    %% the \else-branch is called.
     \expandafter\ifx\expandafter*\the\esk@TeX*\else
       %% Append "\begin{document}" on a new line to \esk@TeX token register...
       \esk@TeX=\expandafter{\the\esk@TeX^^J\begin{document}}%
       %% ...and write it out - a line with "verbatimtex" prepended
-      %% and  a line "etex;" appended
+      %% and  a line "etex;" appended (embed in a verbatim environment)
       \eskwrite{verbatimtex^^J\the\esk@TeX^^Jetex;}%
     \fi
+    %% if the token register \esk@prelude is not empty, write it out, followed by a ";"
     \expandafter\ifx\expandafter*\the\esk@prelude*\else
       \eskwrite{\the\esk@prelude;}%
     \fi
@@ -202,9 +208,13 @@
 % And here is how we close the |empfile| environment:
 %    \begin{macrocode}
 \def\endeskfile{%
+  %% If the token register \esk@TeX is not empty, append a
+  %% \end{document} in a verbatim environment (^^J for line feed)
+  %% to the output file
   \expandafter\ifx\expandafter*\the\esk@TeX*\else
     \eskwrite{verbatimtex^^J\string\end{document}^^Jetex;}%
   \fi
+  %% write end statements to the file
   \eskwrite{\p@rcent\p@rcent\p@rcent\space the end.^^J%
             end.^^J%
             endinput;}%
