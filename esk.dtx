@@ -6,7 +6,7 @@
 %% code from inside LaTeX documents.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
-% \changes{v0.01}{2009/08/15}
+% \changes{v0.01}{2010/03/01}
 %
 % This project is greatly inspired and based on EMP. EMP is a LaTeX package
 % to provide a convenient way to work with metapost files and code from
@@ -31,7 +31,7 @@
 %%   - \string<\macro> returns the "macro" (the name of a macro)
 %%
 %% locally define the macro \fileversion (no parameters, replacement: v1.00)
-\def\fileversion{v1.00}
+\def\fileversion{v0.01}
 %% Make clear what LaTeX version is needed: LaTeX2e
 \NeedsTeXFormat{LaTeX2e}
 %% Now define localy (visible in scope) a RCS (revision control system)
@@ -73,9 +73,9 @@
 
 % \begin{macro}{\eskwrite}
 %    \begin{macrocode}
-%% define the % sign as a common letter (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_TeX_Primitiven:_%5Ccatcode)
+%% define the % sign locally as a common letter (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_TeX_Primitiven:_%5Ccatcode)
 %% and globally (but through the @ only visible inside the package (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_@))
-%% define a percent sign macro (probably used for comments, TODO: Sketch allows also #-Comments)
+%% define a percent sign macro (used for comments)
 {\catcode`\%=11\gdef\p@rcent{%}}
 %% define a macro to write to a file specified by #1
 \def\eskwrite#1{%
@@ -127,21 +127,15 @@
 % append |\begin{document}| to a non-empty |\LaTeX| prelude and write
 % it out:
 % \begin{macrocode}
-    %% if "\esk@TeX" token register is empty, "\the\..." will be replaced by
+    \expandafter\ifx\expandafter*\the\esk@TeX*\else
+    \fi
+    %% if "\esk@prelude" token register is empty, "\the\..." will be replaced by
     %% an empty sting and "\ifx" will yield in true (because * equals *), and the
-    %% "\else" branch which actually appends "\begin..." will _not_ be called.
+    %% "\else" branch will _not_ be called.
     %% If the token register is not empty (and does not start with an asterisk)
     %% the \else-branch is called.
-    \expandafter\ifx\expandafter*\the\esk@TeX*\else
-      %% Append "\begin{document}" on a new line to \esk@TeX token register...
-      \esk@TeX=\expandafter{\the\esk@TeX^^J\begin{document}}%
-      %% ...and write it out - a line with "verbatimtex" prepended
-      %% and  a line "etex;" appended (embed in a verbatim environment)
-      \eskwrite{verbatimtex^^J\the\esk@TeX^^Jetex;}%
-    \fi
-    %% if the token register \esk@prelude is not empty, write it out, followed by a ";"
     \expandafter\ifx\expandafter*\the\esk@prelude*\else
-      \eskwrite{\the\esk@prelude;}%
+      \eskwrite{\the\esk@prelude}%
     \fi
   \fi
 %    \end{macrocode}
@@ -156,25 +150,12 @@
 %    \end{macrocode}
 % Standard preludes:
 %    \begin{macrocode}
+
 %% Create a new symbolic token register name "\esk@TeX"
 %% If the indirct alias creation \newtoks is used, TeX selects a
 %% register to take and hides this technical detail from us.
 \newtoks\esk@TeX
-%% Switch for \@ptsize, which has to be a number
-%% The token register \esk@TeX is initialized with a \documentclass macro
-\ifcase\@ptsize
-  %% \@ptsize == 0
-  \esk@TeX={\documentclass[10pt]{article}}
-\or
-  %% \@ptsize == 1
-  \esk@TeX={\documentclass[11pt]{article}}
-\or
-  %% \@ptsize == 2
-  \esk@TeX={\documentclass[12pt]{article}}
-\else
-  %% \@ptsize in all other cases
-  \esk@TeX={\documentclass{article}}
-\fi
+
 %% Again, create a new token register alias "\esk@prelude"
 \newtoks\esk@prelude
 %    \end{macrocode}
@@ -208,16 +189,8 @@
 % And here is how we close the |empfile| environment:
 %    \begin{macrocode}
 \def\endeskfile{%
-  %% If the token register \esk@TeX is not empty, append a
-  %% \end{document} in a verbatim environment (^^J for line feed)
-  %% to the output file
-  \expandafter\ifx\expandafter*\the\esk@TeX*\else
-    \eskwrite{verbatimtex^^J\string\end{document}^^Jetex;}%
-  \fi
   %% write end statements to the file
-  \eskwrite{\p@rcent\p@rcent\p@rcent\space the end.^^J%
-            end.^^J%
-            endinput;}%
+  \eskwrite{\p@rcent\p@rcent\p@rcent\space the end.^^J}%
   %% Like in intialization, let "\theeskfile" be the same as "\relax"
   %% This an indicator of being outside of an eskfile environment.
   \let\theeskfile\relax
@@ -231,7 +204,8 @@
 % \begin{macro}{\esk}
 %    \begin{macrocode}
 %% define a public macro to (re-)define "\esk@@name" with the argument
-%% and call internal \esk@
+%% (or the default asterisk) and call internal \esk@ to produce a single
+%% esk graphic
 \newcommand{\esk}[1][*]{%
   \def\esk@@name{#1}%
   \esk@}
@@ -240,6 +214,7 @@
 %
 % \begin{macro}{\esk@}
 %    \begin{macrocode}
+%% define a private \esk@ macro
 \def\esk@(#1,#2){%
   \esk@start{#1}{#2}%
   \esk@includegraphics{\theeskfile}{\theeskfig}%
@@ -249,17 +224,23 @@
 %
 % \begin{macro}{\esk@start}
 %    \begin{macrocode}
+%% A macro for creating a new Sketch figure. Te parameters
+%% are width and height of the figure.
 \def\esk@start#1#2{%
   \esk@checkfile
 %    \end{macrocode}
 % We can't use |\stepcounter| because of the |amstext| option of
 % AMS-\LaTeX{} disables it sometimes.
 %    \begin{macrocode}
+  %% globally advance the eskfig counter manually by one
   \global\expandafter\advance\csname c@eskfig\endcsname \@ne
+  %% call \esk@@def with our prev. defined temporary esk file name 
+  %% and gererate new \theeskfile and \theeskfile alias macros
   \esk@@def{\esk@@name}%
 %    \end{macrocode}
-% Start the \MP{} figure:
+% Start the Sketch figure:
 %    \begin{macrocode}
+  %% TODO: write out the sketch figure introduction
   \eskwrite{beginfig(\theeskfig);^^J%
                      LaTeX_unitlength := \the\unitlength;^^J%
                      w := #1*LaTeX_unitlength;^^J%
@@ -352,9 +333,17 @@
 %
 % \begin{macro}{\esk@@def}
 %    \begin{macrocode}
+%% a macro vhich takes a file name as argument to
+%% globally define new macros "esk@k:f:<arg>" and
+%% "esk@k:c:<arg>" which have the replacements
+%% \theeskfile and \theeskfig respectively.
 \def\esk@@def#1{%
   \global\e@namedef{esk@k:f:#1}{\theeskfile}%
   \global\e@namedef{esk@k:c:#1}{\theeskfig}}
+%% a macro which defines a new macro with the name of the
+%% argument (generated by \expandafter and \csname..,) and
+%% expands the following tokens (the new macros body) due
+%% to the use of \edef dynamically
 \def\e@namedef#1{\expandafter\edef\csname #1\endcsname}
 %    \end{macrocode}
 % \end{macro}
