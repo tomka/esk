@@ -77,6 +77,13 @@
 %% and globally (but through the @ only visible inside the package (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_@))
 %% define a percent sign macro (used for comments)
 {\catcode`\%=11\gdef\p@rcent{%}}
+%% define curly brace macros
+{\catcode`\>=1  \catcode`\<=2
+ \catcode`\{=11 \catcode`\}=11
+ \gdef\lc@rly>{<
+ \gdef\rc@rly>}<
+ \catcode`\{=1  \catcode`\}=2
+}
 %% define a macro to write to a file specified by #1
 \def\eskwrite#1{%
   %% is the variable "@eskio" set?
