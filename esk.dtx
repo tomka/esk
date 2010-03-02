@@ -73,7 +73,8 @@
 
 % \begin{macro}{\eskwrite}
 %    \begin{macrocode}
-%% define the % sign locally as a common letter (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_TeX_Primitiven:_%5Ccatcode)
+%% define the % sign locally as a common letter
+%% (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_TeX_Primitiven:_%5Ccatcode)
 %% and globally (but through the @ only visible inside the package (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_@))
 %% define a percent sign macro (used for comments)
 {\catcode`\%=11\gdef\p@rcent{%}}
@@ -88,11 +89,15 @@
 \def\eskwrite#1{%
   %% is the variable "@eskio" set?
   \if@eskio
-    %% write the contents of "#1" immediately, instead of waiting for shipout (http://www.tug.org/utilities/plain/cseq.html#immediate-rp)
-    %% where to write is stored in "\@outemp" (http://www.tug.org/utilities/plain/cseq.html#write-rp)
+    %% write the contents of "#1" immediately, instead of waiting for
+    %% shipout
+    %% (http://www.tug.org/utilities/plain/cseq.html#immediate-rp)
+    %% where to write is stored in "\@outemp"
+    %% (http://www.tug.org/utilities/plain/cseq.html#write-rp)
     \immediate\write\@outemp{#1}%
   \fi
-  %% ignore all the space on the input that follow immediately (http://en.wikibooks.org/wiki/TeX/ignorespaces)
+  %% ignore all the space on the input that follow immediately
+  %% (http://en.wikibooks.org/wiki/TeX/ignorespaces)
   \ignorespaces}
 
 %% create new private boolean toggle "@eskio"... (http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2007-05/msg00698.html)
@@ -125,9 +130,10 @@
     \@ifundefined{ifmeasuring@}%
       {}%
       {\def\if@eskio{\ifmeasuring@\else}}%
-    %% Assign a new output file (our "\theeskfile") to our "@outemp" file number
+    %% Assign a new output file (our "\theeskfile") to our
+    %% "@outemp" file number
     \immediate\openout\@outemp=\theeskfile.sk\relax
-    %% And write "%%% <\theeskfile>.sk -- % do not edit, ..." out immediately
+    %% And write start comment out immediately
     \eskwrite{\p@rcent\p@rcent\p@rcent\space \theeskfile.sk -- %
               do not edit, generated automatically by \jobname.tex}%
 %    \end{macrocode}
@@ -136,11 +142,11 @@
 % \begin{macrocode}
     \expandafter\ifx\expandafter*\the\esk@TeX*\else
     \fi
-    %% if "\esk@prelude" token register is empty, "\the\..." will be replaced by
-    %% an empty sting and "\ifx" will yield in true (because * equals *), and the
-    %% "\else" branch will _not_ be called.
-    %% If the token register is not empty (and does not start with an asterisk)
-    %% the \else-branch is called.
+    %% if "\esk@prelude" token register is empty, "\the\..." will be
+    %% replaced by an empty sting and "\ifx" will yield in true
+    %% (because * equals *), and the "\else" branch will _not_ be called.
+    %% If the token register is not empty (and does not start with
+    %% an asterisk) the \else-branch is called.
     \expandafter\ifx\expandafter*\the\esk@prelude*\else
       \eskwrite{\the\esk@prelude}%
     \fi
@@ -195,7 +201,6 @@
 \newtoks\esk@globals
 \esk@globals={languge tikz}
 
-%
 % \begin{macro}{\endeskfile}
 % And here is how we close the |empfile| environment:
 %    \begin{macrocode}
