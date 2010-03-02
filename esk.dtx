@@ -186,8 +186,8 @@
 %% to the token register \esk@TeX on a new line. ^^J is a replacement ascii
 %% representation for LF or line feed" (http://www.torsten-horn.de/techdocs/ascii.htm)
 \def\eskaddtoTeX#1{\esk@TeX=\expandafter{\the\esk@TeX^^J#1}}
-%% define a public \eskprelude macro that stores its replaces the
-%% contents fo the internal token register \esk@prelude with its argument
+%% define a public \eskprelude macro that replaces the contents
+%% of the internal token register \esk@prelude with its argument
 \def\eskprelude#1{\esk@prelude={#1}}
 %% define a public \eskaddtoprelude macro that appends its argument
 %% to the internal \esk@prelude token register on a new line
@@ -254,6 +254,7 @@
 %% A macro for creating a new Sketch figure. Te parameters
 %% are width and height of the figure.
 \def\esk@start#1#2{%
+  %% make sure that a sketch file is open
   \esk@checkfile
 %    \end{macrocode}
 % We can't use |\stepcounter| because of the |amstext| option of
@@ -314,11 +315,36 @@
 % Write to the file:
 %    \begin{macrocode}
 \def\eskcmds{%
+  %% create a new environment
   \begingroup
+    %% \@bsphack ... \@esphack
+    %%     used by macros such as \index and \begin{@float} ... \end{@float}
+    %%     that want to be invisible -- i.e.,
+    %%     not leave any extra space when used in the middle of text.  Such
+    %%     a macro should begin with \@bsphack and end with \@esphack
+    %%     The macro in question should not create any text, nor change the
+    %%     mode
     \@bsphack
+    %% defuse latex special characters:
+    %% \dospeciels contains a list of special characters of the form
+    %% "\do\ \do\\\do\{\do\}...". If one (re-)defines the "\do" macro
+    %% one can execute a macro on all of them. In our case we define
+    %% "\do" with "\@makeother" that assigns "\catcode 12" (non-letter),
+    %% thus they get normal characters without any special meaning.
+    %% Due to the environment those changes are local.
     \let\do\@makeother\dospecials
+    %% ^^M is the ascii representation of CR (carriage return). Make it
+    %% an active character. Thus a macro with the name "^^M" can now be
+    %% defined.
     \catcode`\^^M\active
+    %% Since we use the verbatim package "\verbatim@processline" is called
+    %% after each line. We redifine it to do what we would like it to do
+    %% (the current line is available in "\verbatim@line", a token register):
+    %% Write the current line into the esk file.
+    %% from: Latex hacks, p. 43 of Anselm Lingnau
     \def\verbatim@processline{\eskwrite{\the\verbatim@line}}%
+    %% Enter the real verbatim mode, from here on _all_ characters have
+    %% lost their special meaning (if they had any).
     \verbatim@start}%
 %    \end{macrocode}
 % \end{macro}
@@ -326,6 +352,7 @@
 % \begin{macro}{\endeskcmds}
 %    \begin{macrocode}
 \def\endeskcmds{%
+    %% end invisible environment (see \eskcmds)
     \@esphack
   \endgroup}
 %    \end{macrocode}
