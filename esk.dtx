@@ -191,11 +191,19 @@
 %     \end{macro}
 %   \end{macro}
 % \end{macro}
+
+\newtoks\esk@globals
+\esk@globals={languge tikz}
+
 %
 % \begin{macro}{\endeskfile}
 % And here is how we close the |empfile| environment:
 %    \begin{macrocode}
 \def\endeskfile{%
+  %% write global settings, if any
+  \expandafter\ifx\expandafter*\the\esk@globals*\else
+    \eskwrite{global \lc@rly\the\esk@globals\rc@rly }%
+  %\fi
   %% write end statements to the file
   \eskwrite{\p@rcent\p@rcent\p@rcent\space the end.^^J}%
   %% Like in intialization, let "\theeskfile" be the same as "\relax"
