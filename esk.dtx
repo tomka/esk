@@ -199,7 +199,14 @@
 % \end{macro}
 
 \newtoks\esk@globals
-\esk@globals={languge tikz}
+\esk@globals={language tikz}
+
+%% define a public \eskglobals macro that replaces the contents
+%% of the internal token register \esk@globals with its argument
+\def\eskglobals#1{\esk@globals={#1}}
+%% define a public \eskaddtoglobals macro that appends its argument
+%% to the internal \esk@globals token register, delimited by a comma
+\def\eskaddtoglobals#1{\esk@globals=\expandafter{\the\esk@globals,#1}}
 
 % \begin{macro}{\endeskfile}
 % And here is how we close the |empfile| environment:
@@ -261,10 +268,11 @@
 % Start the Sketch figure:
 %    \begin{macrocode}
   %% TODO: write out the sketch figure introduction
-  \eskwrite{beginfig(\theeskfig);^^J%
-                     LaTeX_unitlength := \the\unitlength;^^J%
-                     w := #1*LaTeX_unitlength;^^J%
-                     h := #2*LaTeX_unitlength;}}
+  %%\eskwrite{beginfig(\theeskfig);^^J%
+  %%                   LaTeX_unitlength := \the\unitlength;^^J%
+  %%                   w := #1*LaTeX_unitlength;^^J%
+  %%                   h := #2*LaTeX_unitlength;}
+  }
 %    \end{macrocode}
 % \end{macro}
 %
