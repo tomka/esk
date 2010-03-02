@@ -300,9 +300,11 @@
   %% switch from vertical to horizontal mode
   \leavevmode
   \IfFileExists{#1.#2}%
-    {\includegraphics{#1.#2}}%
+    %% The actual file must heve the extension ".tex", "\input"
+    %% expects this.
+    {\input{#1.#2}}%
     {\typeout{%
-      esk: File #1.#2\space not found:^^J%
+      esk: File #1.#2.tex\space not found:^^J%
       esk: Process #1.sk with Sketch and then %
            reprocess this file.}}}
 %    \end{macrocode}
@@ -332,8 +334,8 @@
 % \begin{macro}{\endesk}
 %    \begin{macrocode}
 \def\endesk{%
-  \endeskcmds
-  \eskwrite{endfig;}}
+  %% end esk input environment
+  \endeskcmds}
 %    \end{macrocode}
 % \end{macro}
 %
