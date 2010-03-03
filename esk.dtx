@@ -140,8 +140,6 @@
 % append |\begin{document}| to a non-empty |\LaTeX| prelude and write
 % it out:
 % \begin{macrocode}
-    \expandafter\ifx\expandafter*\the\esk@TeX*\else
-    \fi
     %% if "\esk@prelude" token register is empty, "\the\..." will be
     %% replaced by an empty sting and "\ifx" will yield in true
     %% (because * equals *), and the "\else" branch will _not_ be called.
@@ -402,32 +400,6 @@
 %% expands the following tokens (the new macros body) due
 %% to the use of \edef dynamically
 \def\e@namedef#1{\expandafter\edef\csname #1\endcsname}
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\eskgraph}
-%    \begin{macrocode}
-\newcommand{\eskgraph}[1][*]{%
-  \def\esk@@name{#1}%
-  \esk@graph}
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\esk@graph}
-%    \begin{macrocode}
-\def\esk@graph(#1,#2){%
-  \esk@start{#1}{#2}%
-  \eskwrite{draw begingraph (w, h);}%
-  \esk@includegraphics{\theeskfile}{\theeskfig}%
-  \eskcmds}
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\endeskgraph}
-%    \begin{macrocode}
-\def\endeskgraph{%
-  \endeskcmds
-  \eskwrite{endgraph;^^Jendfig;}}
 %    \end{macrocode}
 % \end{macro}
 %
