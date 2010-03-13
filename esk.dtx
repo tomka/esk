@@ -257,14 +257,14 @@
 %% A macro for creating a new Sketch figure. Te parameters
 %% are width and height of the figure.
 \def\esk@start#1#2{%
-  %% make sure that a sketch file is open
-  \esk@checkfile
 %    \end{macrocode}
 % We can't use |\stepcounter| because of the |amstext| option of
 % AMS-\LaTeX{} disables it sometimes.
 %    \begin{macrocode}
   %% globally advance the eskfig counter manually by one
   \global\expandafter\advance\csname c@eskfig\endcsname \@ne
+  %% make sure that a sketch file is open
+  \esk@checkfile
   %% call \esk@@def with our prev. defined temporary esk file name 
   %% and gererate new \theeskfile and \theeskfile alias macros
   \esk@@def{\esk@@name}%
@@ -288,12 +288,12 @@
   %% check if "\theeskfile" is the same as "\relax" (as defined for
   %% initialization). If so, print and produce error.
   \ifx\theskfile\relax
-    \errhelp={Outside a eskfile environment, I have no clue as to where^^J%
-              the Sketch commands should go.   I will use eskdefault.sk^^J%
+    \errhelp={Outside a eskfile environment, I have no clue as to where the^^J%
+              Sketch commands should go.   I will use eskdefault<counter>.sk^^J%
               for this graph, but you'd better fix your code!}%
     \errmessage{I detected an esk environment outside of eskfile}%
     %% begin a new esk file
-    \eskfile[eskdefault]
+    \eskfile[eskdefault\the\eskfig]
   \fi}
 %    \end{macrocode}
 % \end{macro}
