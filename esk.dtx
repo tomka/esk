@@ -97,9 +97,9 @@
     %% write the contents of "#1" immediately, instead of waiting for
     %% shipout
     %% (http://www.tug.org/utilities/plain/cseq.html#immediate-rp)
-    %% where to write is stored in "\@outemp"
+    %% where to write is stored in "\@outesk"
     %% (http://www.tug.org/utilities/plain/cseq.html#write-rp)
-    \immediate\write\@outemp{#1}%
+    \immediate\write\@outesk{#1}%
   \fi
   %% ignore all the space on the input that follow immediately
   %% (http://en.wikibooks.org/wiki/TeX/ignorespaces)
@@ -109,17 +109,17 @@
 \newif\if@eskio
 %% ...and set it to true
 \@eskiotrue
-%% define the next free file number (in range 0-15) to private macro "\@outemp",
-%% but do not open it (exampla file open: \openout\@outemp=TEXTFILE.TXT)
+%% define the next free file number (in range 0-15) to private macro "\@outesk",
+%% but do not open it (exampla file open: \openout\@outesk=TEXTFILE.TXT)
 %% see: (http://books.google.de/books?id=bXLDwmIJNkUC&pg=PA283&lpg=PA283&dq=tex+%22\newwrite%22&source=bl&ots=xNXas4Y6Rz&sig=KrxZPqhl_0izHGvda9235RoyTHU&hl=de&ei=tKKGSszRGML6_AaNgaGWBw&sa=X&oi=book_result&ct=result&resnum=10#v=onepage&q=tex%20%22\newwrite%22&f=false)
-\newwrite\@outemp
+\newwrite\@outesk
 %    \end{macrocode}
 % \end{macro}
 %
 
 
 
-% \begin{macro}{\empfile}
+% \begin{macro}{\eskfile}
 % This environment encloses each Sketch input file.  The single optional
 % argument gives the name of the file and defaults to |\jobname|.
 %    \begin{macrocode}
@@ -136,8 +136,8 @@
       {}%
       {\def\if@eskio{\ifmeasuring@\else}}%
     %% Assign a new output file (our "\theeskfile") to our
-    %% "@outemp" file number
-    \immediate\openout\@outemp=\theeskfile.sk\relax
+    %% "@outesk" file number
+    \immediate\openout\@outesk=\theeskfile.sk\relax
     %% And write start comment out immediately
     \eskwrite{\p@rcent\p@rcent\p@rcent\space \theeskfile.sk -- %
               do not edit, generated automatically by \jobname.tex}%
@@ -226,7 +226,7 @@
   \let\theeskfile\relax
   %% if a file is opened, close it.
   \if@eskio
-    \immediate\closeout\@outemp
+    \immediate\closeout\@outesk
   \fi}
 %    \end{macrocode}
 % \end{macro}
@@ -288,7 +288,7 @@
   %% check if "\theeskfile" is the same as "\relax" (as defined for
   %% initialization). If so, print and produce error.
   \ifx\theskfile\relax
-    \errhelp={Outside a empfile environment, I have no clue as to where^^J%
+    \errhelp={Outside a eskfile environment, I have no clue as to where^^J%
               the Sketch commands should go.   I will use eskdefault.sk^^J%
               for this graph, but you'd better fix your code!}%
     \errmessage{I detected an esk environment outside of eskfile}%
