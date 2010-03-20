@@ -238,6 +238,8 @@
 %% esk graphic
 \newcommand{\esk}[1][*]{%
   \def\esk@@name{#1}%
+  %% open a new file
+  \eskfile{#1}
   \esk@}
 %    \end{macrocode}
 % \end{macro}
@@ -289,7 +291,7 @@
   %% initialization). If so, print and produce error.
   \ifx\theskfile\relax
     \errhelp={Outside a eskfile environment, I have no clue as to where the^^J%
-              Sketch commands should go.   I will use eskdefault<counter>.sk^^J%
+              Sketch commands should go. I will use eskdefault.<counter>.sk^^J%
               for this graph, but you'd better fix your code!}%
     \errmessage{I detected an esk environment outside of eskfile}%
     %% begin a new esk file
@@ -365,7 +367,10 @@
 %    \begin{macrocode}
 \def\endesk{%
   %% end esk input environment
-  \endeskcmds}
+  \endeskcmds
+  %% close the current file
+  \endeskfile
+  }
 %    \end{macrocode}
 % \end{macro}
 %
