@@ -153,15 +153,11 @@
     \expandafter\ifx\expandafter*\the\esk@prelude*\else
       \eskwrite{\the\esk@prelude}%
     \fi
-  \fi
-%    \end{macrocode}
-% Count the figures
-%    \begin{macrocode}
-  %% Assign 0 to the counter "eskfig"
-  \setcounter{eskfig}{0}}
+  \fi}
 %% Redefine \theeskfile with \relax
 \let\theeskfile\relax
-%% Define a new counter "eskfig" (initialized with 0)
+% Define a new counter "eskfig" (initialized with 0) to
+% count the single esk figures.
 \newcounter{eskfig}
 %    \end{macrocode}
 % Standard preludes:
@@ -234,12 +230,10 @@
 % \begin{macro}{\esk}
 %    \begin{macrocode}
 %% define a public macro to (re-)define "\esk@@name" with the argument
-%% (or the default asterisk) and call internal \esk@ to produce a single
+%% (or the default: the job name ) and call internal \esk@ to produce a single
 %% esk graphic
-\newcommand{\esk}[1][*]{%
+\newcommand{\esk}[1][\jobname]{%
   \def\esk@@name{#1}%
-  %% open a new file
-  \eskfile{#1}
   \esk@}
 %    \end{macrocode}
 % \end{macro}
@@ -289,13 +283,12 @@
 \def\esk@checkfile{%
   %% check if "\theeskfile" is the same as "\relax" (as defined for
   %% initialization). If so, print and produce error.
-  \ifx\theskfile\relax
-    \errhelp={Outside a eskfile environment, I have no clue as to where the^^J%
-              Sketch commands should go. I will use eskdefault.<counter>.sk^^J%
-              for this graph, but you'd better fix your code!}%
-    \errmessage{I detected an esk environment outside of eskfile}%
-    %% begin a new esk file
-    \eskfile[eskdefault\the\eskfig]
+  \ifx\theeskfile\relax
+    %%\errhelp={Outside a eskfile environment, I have no clue as to where the^^J%
+    %%          Sketch commands should go. I will use \esk@@name.\arabic{eskfig}.sk^^J%
+    %%         for this graph, but you'd better fix your code!}%
+    %%\errmessage{I detected an esk environment outside of eskfile}%
+    \eskfile[\esk@@name.\arabic{eskfig}]
   \fi}
 %    \end{macrocode}
 % \end{macro}
@@ -305,13 +298,13 @@
 \def\esk@includegraphics#1#2{%
   %% switch from vertical to horizontal mode
   \leavevmode
-  \IfFileExists{#1.#2}%
+  \IfFileExists{#1.sk.tex}%
     %% The actual file must heve the extension ".tex", "\input"
     %% expects this.
-    {\input{#1.#2}}%
+    {\input{#1.sk.tex}}%
     {\typeout{%
-      esk: File #1.#2.tex\space not found:^^J%
-      esk: Process #1.sk with Sketch and then %
+      esk: File #1.sk.tex\space not found:^^J%
+      esk: Process #1.sk with Sketch (-o #1.sk.tex) and then %
            reprocess this file.}}}
 %    \end{macrocode}
 % \end{macro}
