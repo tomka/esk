@@ -244,7 +244,7 @@
 \def\esk@(#1,#2){%
   \esk@start{#1}{#2}%
   \esk@includegraphics{\theeskfile}{\theeskfig}%
-  \eskcmds}
+  \esk@cmds}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -309,10 +309,10 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\eskcmds}
+% \begin{macro}{\esk@cmds}
 % Write to the file:
 %    \begin{macrocode}
-\def\eskcmds{%
+\def\esk@cmds{%
   %% create a new environment
   \begingroup
     %% \@bsphack ... \@esphack
@@ -347,10 +347,10 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\endeskcmds}
+% \begin{macro}{\endesk@cmds}
 %    \begin{macrocode}
-\def\endeskcmds{%
-    %% end invisible environment (see \eskcmds)
+\def\endesk@cmds{%
+    %% end invisible environment (see \esk@cmds)
     \@esphack
   \endgroup}
 %    \end{macrocode}
@@ -360,7 +360,7 @@
 %    \begin{macrocode}
 \def\endesk{%
   %% end esk input environment
-  \endeskcmds
+  \endesk@cmds
   %% close the current file
   \endeskfile
   }
@@ -379,7 +379,7 @@
 %    \begin{macrocode}
 \def\esk@def(#1,#2){%
   \esk@start{#1}{#2}%
-  \eskcmds}
+  \esk@cmds}
 %    \end{macrocode}
 % \end{macro}
 %
