@@ -243,7 +243,7 @@
 %% define a private \esk@ macro
 \def\esk@(#1,#2){%
   \esk@start{#1}{#2}%
-  \esk@includegraphics{\theeskfile}{\theeskfig}%
+  \esk@includegraphics{\theeskfile}%
   \esk@cmds}
 %    \end{macrocode}
 % \end{macro}
@@ -295,7 +295,7 @@
 %
 % \begin{macro}{\esk@includegraphics}
 %    \begin{macrocode}
-\def\esk@includegraphics#1#2{%
+\def\esk@includegraphics#1{%
   %% switch from vertical to horizontal mode
   \leavevmode
   \IfFileExists{#1.sk.tex}%
@@ -411,7 +411,7 @@
 \def\eskuse#1{%
   \@ifundefined{esk@k:f:#1}%
    {\typeout{esk: \string\eskuse: `#1' undefined!}}%
-   {\esk@includegraphics{\@nameuse{esk@k:f:#1}}{\@nameuse{esk@k:c:#1}}}}
+   {\esk@includegraphics{\@nameuse{esk@k:f:#1}}}}
 %</style>
 %    \end{macrocode}
 % \end{macro}
