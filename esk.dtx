@@ -370,6 +370,12 @@
 % \begin{macro}{\eskdef}
 %    \begin{macrocode}
 \newcommand{\eskdef}[1]{%
+  %% TODO: Make it more robust by remembering old name
+  %% and setting it back afterwards (if any), so it can
+  %% be used in esk envirnoments
+
+  %% Define a new name
+  \def\esk@@def@name{esk@def:#1}%
   \esk@def}
 %    \end{macrocode}
 % \end{macro}
@@ -377,13 +383,32 @@
 % \begin{macro}{\esk@def}
 %    \begin{macrocode}
 \def\esk@def{%
+  %% Test if the name is already registered
+  \expandafter\ifcsname\esk@@def@name\endcsname
+    \errmessage{"\esk@@def@name" is already defined!}
+  \fi
+  %% Create new token registers named like the
+  %% expansion of \esk@@def@name
+  %% new... towkens act always globally
+  \global\expandafter\tok@newtoks\csname\esk@@def@name\endcsname
+  %% Create/Override a global definition "\esk@@def@reg" containing
+  %% our new token register. Unfortunately, this works only with
+  %% a global definition.
+  \global\edef\esk@@def@reg{\csname\esk@@def@name\endcsname}
+  %% call the verbatim reading of the environment
   \esk@cmds{esk@def@verbatim@handler}}
+  %% clear the temp token list register alias
+  \global\def\esk@@def@reg{}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\esk@def@verbatim@handler}
 %    \begin{macrocode}
 \def\esk@def@verbatim@handler#1{%
+  %% create a local alias for the token register
+  \expandafter\let\expandafter\token@reg\esk@@def@reg
+  %% append the parameter to current token register
+  \global\esk@@def@reg=\expandafter{\the\expandafter\token@reg\expandafter,\the#1}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -416,12 +441,21 @@
 % \begin{macro}{\eskuse}
 %    \begin{macrocode}
 \def\eskuse#1{%
-  \@ifundefined{esk@k:f:#1}%
-   {\typeout{esk: \string\eskuse: `#1' undefined!}}%
-   {\esk@includegraphics{\@nameuse{esk@k:f:#1}}}}
+  \def\esk@@def@name{esk@def:#1}%
+  %% Test if the name is already registered
+  \expandafter\ifcsname\esk@@def@name\endcsname
+    \errmessage{Not yet implemented!}
+%%   {\esk@includegraphics{\@nameuse{esk@k:f:#1}}}
+  \else
+    \errmessage{esk: \string\eskuse: "#1" is undefined!}
+  \fi
+
+}
 %</style>
 %    \end{macrocode}
 % \end{macro}
+%
+\def\tok@newtoks{\csname newtoks\endcsname} %\newtoks not allowed in definitios since it is an \outer command
 %
 % \Finale
 %
