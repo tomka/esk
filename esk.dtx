@@ -105,6 +105,10 @@
   %% (http://en.wikibooks.org/wiki/TeX/ignorespaces)
   \ignorespaces}
 
+\def\eskwritetoken#1{
+	\eskwrite{\the#1}
+}
+
 %% create new private boolean toggle "@eskio"... (http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2007-05/msg00698.html)
 \newif\if@eskio
 %% ...and set it to true
@@ -244,7 +248,7 @@
 \def\esk@(#1,#2){%
   \esk@start{#1}{#2}%
   \esk@includegraphics{\theeskfile}%
-  \esk@cmds}
+  \esk@cmds{eskwritetoken}}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -310,9 +314,9 @@
 % \end{macro}
 %
 % \begin{macro}{\esk@cmds}
-% Write to the file:
+% Write the Sketch code to a target. This could be any macro taking one argument. In use are |eskwrite| and |esk@def@verbatim@handler|.
 %    \begin{macrocode}
-\def\esk@cmds{%
+\newcommand{\esk@cmds}[1]{%
   %% create a new environment
   \begingroup
     %% \@bsphack ... \@esphack
@@ -340,7 +344,7 @@
     %% (the current line is available in "\verbatim@line", a token register):
     %% Write the current line into the esk file.
     %% from: Latex hacks, p. 43 of Anselm Lingnau
-    \def\verbatim@processline{\eskwrite{\the\verbatim@line}}%
+    \def\verbatim@processline{\csname#1\endcsname{\verbatim@line}}%
     %% Enter the real verbatim mode, from here on _all_ characters have
     %% lost their special meaning (if they had any).
     \verbatim@start}%
@@ -369,23 +373,30 @@
 %
 % \begin{macro}{\eskdef}
 %    \begin{macrocode}
-\newcommand{\eskdef}[1][\relax]{%
-  \def\esk@@name{#1}%
+\newcommand{\eskdef}[1]{%
   \esk@def}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\esk@def}
 %    \begin{macrocode}
-\def\esk@def(#1,#2){%
-  \esk@start{#1}{#2}%
-  \esk@cmds}
+\def\esk@def{%
+  \esk@cmds{esk@def@verbatim@handler}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\esk@def@verbatim@handler}
+%    \begin{macrocode}
+\def\esk@def@verbatim@handler#1{%
+}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\endeskdef}
 %    \begin{macrocode}
-\def\endeskdef{\endesk}
+\def\endeskdef{
+  %% end esk input environment
+  \endesk@cmds}
 %    \end{macrocode}
 % \end{macro}
 %
