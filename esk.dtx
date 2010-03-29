@@ -72,6 +72,7 @@
 \ProcessOptions\relax
 \RequirePackage{graphics}[1994/12/15]
 \RequirePackage{verbatim}
+\RequirePackage{kvsetkeys}[2007/09/29]
 %    \end{macrocode}
 %
 
@@ -90,8 +91,9 @@
  \gdef\rc@rly>}<
  \catcode`\{=1  \catcode`\}=2
 }
-%% define a macro to write to a file specified by #1
+%% define a macro to write the contents of #1 to a file 
 \def\eskwrite#1{%
+
   %% is the variable "@eskio" set?
   \if@eskio
     %% write the contents of "#1" immediately, instead of waiting for
@@ -245,18 +247,24 @@
 % \begin{macro}{\esk@}
 %    \begin{macrocode}
 %% define a private \esk@ macro
-\def\esk@(#1,#2){%
-  \esk@start{#1}{#2}%
+\def\esk@#1{%
+  \esk@start%
   \esk@includegraphics{\theeskfile}%
+  %% process optional definition
+  \comma@parse{#1}{\esk@def@processor}
   \esk@cmds{eskwritetoken}}
 %    \end{macrocode}
 % \end{macro}
 %
+\def\esk@def@processor#1{
+  \esk@use{#1}
+}
+%
 % \begin{macro}{\esk@start}
 %    \begin{macrocode}
-%% A macro for creating a new Sketch figure. Te parameters
+%% A macro for creating a new Sketch figure. The parameters
 %% are width and height of the figure.
-\def\esk@start#1#2{%
+\def\esk@start{%
 %    \end{macrocode}
 % We can't use |\stepcounter| because of the |amstext| option of
 % AMS-\LaTeX{} disables it sometimes.
@@ -268,15 +276,7 @@
   %% call \esk@@def with our prev. defined temporary esk file name 
   %% and gererate new \theeskfile and \theeskfile alias macros
   \esk@@def{\esk@@name}%
-%    \end{macrocode}
-% Start the Sketch figure:
-%    \begin{macrocode}
-  %% TODO: write out the sketch figure introduction
-  %%\eskwrite{beginfig(\theeskfig);^^J%
-  %%                   LaTeX_unitlength := \the\unitlength;^^J%
-  %%                   w := #1*LaTeX_unitlength;^^J%
-  %%                   h := #2*LaTeX_unitlength;}
-  }
+}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -385,11 +385,11 @@
 \def\esk@def{%
   %% Test if the name is already registered
   \expandafter\ifcsname\esk@@def@name\endcsname
-    \errmessage{"\esk@@def@name" is already defined!}
+    \rrrmessage{"\esk@@def@name" is already defined!}
   \fi
   %% Create new token registers named like the
   %% expansion of \esk@@def@name
-  %% new... towkens act always globally
+  %% new... tokens act always globally
   \global\expandafter\tok@newtoks\csname\esk@@def@name\endcsname
   %% Create/Override a global definition "\esk@@def@reg" containing
   %% our new token register. Unfortunately, this works only with
@@ -407,8 +407,14 @@
 \def\esk@def@verbatim@handler#1{%
   %% create a local alias for the token register
   \expandafter\let\expandafter\token@reg\esk@@def@reg
-  %% append the parameter to current token register
-  \global\esk@@def@reg=\expandafter{\the\expandafter\token@reg\expandafter,\the#1}
+
+  \expandafter\ifx\expandafter*\the\token@reg*
+    %% if the token register is empty, override it...
+    \global\esk@@def@reg=\expandafter{\the#1}
+  \else
+    %% ...oterwise append the parameter to current token register
+    \global\esk@@def@reg=\expandafter{\the\expandafter\token@reg\expandafter^^J\the#1}
+  \fi
 }
 %    \end{macrocode}
 % \end{macro}
@@ -438,19 +444,30 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\eskuse}
+% \begin{macro}{\esk@use}
 %    \begin{macrocode}
-\def\eskuse#1{%
+\def\esk@use#1{%
   \def\esk@@def@name{esk@def:#1}%
-  %% Test if the name is already registered
+  %% Test if the name is registered
   \expandafter\ifcsname\esk@@def@name\endcsname
-    \errmessage{Not yet implemented!}
-%%   {\esk@includegraphics{\@nameuse{esk@k:f:#1}}}
+    %% write the contents of the token into the file
+    \expandafter\eskwritetoken\expandafter{\expandafter\csname\esk@@def@name\endcsname}
   \else
-    \errmessage{esk: \string\eskuse: "#1" is undefined!}
+    \errmessage{esk: "#1" is undefined!}
   \fi
 
 }
+%
+%
+\def\futurenospacelet#1{\def\cs{#1}%
+  \afterassignment\stepone\let\nexttoken= }
+\def\\{\let\stoken= } \\ % now \stoken is a space tokes
+\def\stepone{\expandafter\futurelet\cs\steptwo}
+\def\steptwo{\expandafter\ifx\cs\stoken\let\next=\stepthree
+  \else\let\next=\nexttoken\fi \next}
+\def\stepthree{\afterassignment\stepone\let\next= }
+%
+%
 %</style>
 %    \end{macrocode}
 % \end{macro}
@@ -485,6 +502,7 @@
 % Protect against certain obsolete versions of the |graphics| package:
 %    \begin{macrocode}
 \usepackage{graphics}[1994/12/15]
+\usepackage{kvsetkeys}[2007/09/29]
 \usepackage{esk}
 %    \end{macrocode}
 %    \begin{macrocode}
