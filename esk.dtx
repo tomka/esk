@@ -450,8 +450,12 @@
   \def\esk@@def@name{esk@def:#1}%
   %% Test if the name is registered
   \expandafter\ifcsname\esk@@def@name\endcsname
+    %% write describing comment as prelude to definiton include
+    \eskwrite{\p@rcent\p@rcent\space included definition: #1}%
     %% write the contents of the token into the file
     \expandafter\eskwritetoken\expandafter{\expandafter\csname\esk@@def@name\endcsname}
+    %% write trailing line break to make result look nicer
+    \eskwrite{^^J}
   \else
     \errmessage{esk: "#1" is undefined!}
   \fi
