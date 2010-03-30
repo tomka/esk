@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\usepackage{subfigure}
+\usepackage{subfig}
 \usepackage{tikz}
 \usepackage{esk}
 
@@ -9,6 +9,29 @@
 
 \author{Tom Kazimiers}
 \date{\today}
+
+
+% the SubFloate macro is taken from the manual
+% of Steven Douglas Cochrans subfig package.
+% ftp://ctan.tug.org/tex-archive/macros/latex/contrib/subfig/subfig.pdf
+\makeatletter
+\newbox\sf@box
+\newenvironment{SubFloat}[2][]%
+{\def\sf@one{#1}%
+	\def\sf@two{#2}%
+		\setbox\sf@box\hbox
+		\bgroup}%
+{ \egroup
+	\ifx\@empty\sf@two\@empty\relax
+		\def\sf@two{\@empty}
+	\fi
+	\ifx\@empty\sf@one\@empty\relax
+		\subfloat[\sf@two]{\box\sf@box}%
+	\else
+		\subfloat[\sf@one][\sf@two]{\box\sf@box}%
+	\fi}
+\makeatother
+
 
 \begin{document}
 \maketitle
@@ -45,7 +68,7 @@
 		    def seg_rot rotate(360 / N, [J])
 		    % draw the pyramid by rotating a line about the J axis
 		    sweep[cull=false,fill=blue!20]
-			{ N, [[seg_rot]] } line(p0)(p1)
+		      { N, [[seg_rot]] } line(p0)(p1)
 		}
 	\end{eskdef}
 
@@ -63,13 +86,46 @@
 		\end{esk}
 		
 		%% second row
-		\begin{esk}{general,axes,pyramid}
-			def scene {
-				{pyramid}
-				{axes}
-			}
-			put { view((10,4,2)) } {scene}
-		\end{esk}
+		\begin{figure}[ht]
+			\centering
+			\begin{SubFloat}{\label{fig:verbone}A coordinate system.}
+				\begin{minipage}[t]{1.5in}
+					\centering
+					\begin{esk}{general,axes}
+						def scene {
+							{axes}
+						}
+						put { view((10,4,2)) } {scene}
+					\end{esk}
+				\end{minipage}%
+			\end{SubFloat}%
+			\begin{SubFloat}{\label{fig:verbtwo}A tetrahydron.}
+				\begin{minipage}[t]{1.5in}
+					\centering
+					\begin{esk}{general,pyramid}
+						def scene {
+							{pyramid}
+						}
+						put { view((10,4,2)) } {scene}
+					\end{esk}
+				\end{minipage}%
+			\end{SubFloat}%
+			\begin{SubFloat}{\label{fig:verbthree}Both combined.}
+				\begin{minipage}[t]{1.5in}
+					\centering
+					\begin{esk}{general,axes,pyramid}
+						def scene {
+							{axes}
+							{pyramid}
+						}
+						put { view((10,4,2)) } {scene}
+					\end{esk}
+				\end{minipage}%
+			\end{SubFloat}%
+			\label{fig:verbatim}
+			\caption{Parts of a scene. In \subref{fig:verbthree} the same esk-definitions were used as in \subref{fig:verbone} and \subref{fig:verbtwo}}
+		\end{figure}
+		
 	\end{center}
 	\begin{center}
 		\begin{esk}{}
