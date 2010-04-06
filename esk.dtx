@@ -63,12 +63,12 @@
 \ProvidesPackage{esk}[\filedate\space\fileversion\space
   Encapsulated Sketch LaTeX Package (\filemaintainer)]
 %    \end{macrocode}
-% Every option we don't understand is sent down to |graphics|:
+% Every option we don't understand is sent down to |graphics|.
+% Afterwars invoke the actual macro for each found and declared opton.
+% Having finished, stop scanning for tokens.
 %    \begin{macrocode}
 %% Every option ("*") is passed down to the graphics package
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{graphics}}
-%% Call the actual code for each found and declared opton.
-%% Stop scanning for tokens afterwards.
 \ProcessOptions\relax
 \RequirePackage{graphics}[1994/12/15]
 \RequirePackage{verbatim}
@@ -79,21 +79,22 @@
 
 % \begin{macro}{\eskwrite}
 %    \begin{macrocode}
-%% define the % sign locally as a common letter
+% Define the \percent sign locally as a common letter and create a
+% global macro using it. That macro is used for creating comments.
 %% (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_TeX_Primitiven:_%5Ccatcode)
 %% and globally (but through the @ only visible inside the package (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_@))
 %% define a percent sign macro (used for comments)
 {\catcode`\%=11\gdef\p@rcent{%}}
-%% define curly brace macros
+% Since we need curly braces in Sketch, define macros for creating
+% them. This is done like in the |p@rcent| macro.
 {\catcode`\>=1  \catcode`\<=2
  \catcode`\{=11 \catcode`\}=11
  \gdef\lc@rly>{<
  \gdef\rc@rly>}<
  \catcode`\{=1  \catcode`\}=2
 }
-%% define a macro to write the contents of #1 to a file 
+% Define a macro to write the contents of its first argument to a file.
 \def\eskwrite#1{%
-
   %% is the variable "@eskio" set?
   \if@eskio
     %% write the contents of "#1" immediately, instead of waiting for
@@ -106,25 +107,22 @@
   %% ignore all the space on the input that follow immediately
   %% (http://en.wikibooks.org/wiki/TeX/ignorespaces)
   \ignorespaces}
-
+% If a token list register should be put into a file, this macro should
+% be used.
 \def\eskwritetoken#1{
 	\eskwrite{\the#1}
 }
-
-%% create new private boolean toggle "@eskio"... (http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2007-05/msg00698.html)
+% Create a new private boolean toggle to reflect if file writing
+% is enabled and set it to true.
 \newif\if@eskio
-%% ...and set it to true
 \@eskiotrue
-%% define the next free file number (in range 0-15) to private macro "\@outesk",
+% Define the next free file handle to be referenced by private macro |\@outesk|
 %% but do not open it (exampla file open: \openout\@outesk=TEXTFILE.TXT)
 %% see: (http://books.google.de/books?id=bXLDwmIJNkUC&pg=PA283&lpg=PA283&dq=tex+%22\newwrite%22&source=bl&ots=xNXas4Y6Rz&sig=KrxZPqhl_0izHGvda9235RoyTHU&hl=de&ei=tKKGSszRGML6_AaNgaGWBw&sa=X&oi=book_result&ct=result&resnum=10#v=onepage&q=tex%20%22\newwrite%22&f=false)
 \newwrite\@outesk
 %    \end{macrocode}
 % \end{macro}
 %
-
-
-
 % \begin{macro}{\eskfile}
 % This environment encloses each Sketch input file.  The single optional
 % argument gives the name of the file and defaults to |\jobname|.
@@ -160,9 +158,12 @@
       \eskwrite{\the\esk@prelude}%
     \fi
   \fi}
-%% Redefine \theeskfile with \relax
+
+% Define |\theeskfile|, referencing the name of the currently opened file,
+% to be |\relax| (i. e. stop reading tokens). This should be the value if
+% no file is opened.
 \let\theeskfile\relax
-% Define a new counter "eskfig" (initialized with 0) to
+% Define a new counter |\eskfig| (initialized with 0) to
 % count the single esk figures.
 \newcounter{eskfig}
 %    \end{macrocode}
