@@ -39,11 +39,11 @@ INSTALL_DATA = install -c -m 644
 # INSTALL_DATA = cp
 
 LATEX = latex
-MP = TEX=$(LATEX) mpost
 SK = sketch
 MAKEINDEX = makeindex
 DVIPS = dvips
 DFLAGS =
+FILES="*.sk"
 
 ########################################################################
 # No user serviceable parts below:
@@ -91,14 +91,14 @@ esk.drv eskman.drv: esk.sty
 
 esk.dvi: esk.dtx esk.drv esk.sty
 	-$(LATEX) $*.drv
-	$(MP) $*
+	for i in `ls *.sk`; do $(SK) -o "$$i.tex" "$$i"; done
 	-$(LATEX) $*.drv
 	$(RUN_MAKEINDEX)
 	$(RESOLVE_XREF)
 
 eskman.dvi: esk.dtx eskman.drv esk.sty
 	-$(LATEX) $*.drv
-	$(MP) $*
+	for i in `ls *.sk`; do $(SK) -o "$$i.tex" "$$i"; done
 	-$(LATEX) $*.drv
 	$(RUN_MAKEINDEX)
 	$(RESOLVE_XREF)

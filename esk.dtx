@@ -1,17 +1,142 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% ESP - Encapsulated Sketch Pictures
+%% ESK - Encapsulated Sketch Pictures
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% This project is greatly inspired and based on EMP. EMS is a LaTeX
 %% package to provide a convenient way to work with metapost files and
 %% code from inside LaTeX documents.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \iffalse % esk.dtx - Encapsulated MetaPost for LaTeX(2e)
+% Copyright (C) 2010 by tom@voodoo-arts.net
+% $Id: emp.dtx,v 1.10 1997/11/12 21:14:41 ohl Exp $
+%
+% Esk is free software; you can redistribute it and/or modify it
+% under the terms of the GNU General Public License as published by 
+% the Free Software Foundation; either version 2, or (at your option)
+% any later version.
+%
+% Esk is distributed in the hope that it will be useful, but
+% WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+%
+% \fi
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%% \CheckSum{291}
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \MakeShortVerb{\|}
+%
+% \title{%
+%   \ESK: \\
+%   Encapsulated \SK{} for \LaTeX\thanks{%
+%      This is \texttt{\filename}, version \fileversion,
+%      revision \filerevision, date \filedate.}}
+%
+% \author{%
+%   Tom Kazimiers\thanks{e-mail:
+%     \texttt{tom@voodoo-arts.net}}}
+%
+% \maketitle
+% \begin{abstract}
+%   The \ESK{} package allows to encapsulate \SK{} files in \LaTeX{}
+%   sources.  This is very useful for keeping illustrations in sync
+%   with the text.  It also frees the user from inventing descriptive
+%   names for \LaTeX{} files that fit into the confines of file
+%   system conventions.
+% \end{abstract}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \vfill
+% \section*{Copying}
+%
+% \ESK{} is free software; you can redistribute it and/or modify it
+% under the terms of the GNU General Public License as published by 
+% the Free Software Foundation; either version 2, or (at your option)
+% any later version.
+%
+% \ESK{} is distributed in the hope that it will be useful, but
+% \emph{without any warranty}; without even the implied warranty of
+% \emph{merchantability} or \emph{fitness for a particular purpose}.
+% See the GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \newpage
+% \unitlength=1mm
+% \def\topfraction{0.9}
+% \def\bottomfraction{0.9}
+% \def\textfraction{0.1}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Introduction}
+%
+% When adding illustrations to documents, one faces two bookkeeping
+% problems:
+% \begin{enumerate}
+%   \item How to encourage oneself to keep the illustrations in sync
+%     with the text, when the document is updated?
+%   \item How to make sure that the illustrations appear on the right
+%     spot? 
+% \end{enumerate}
+% For both problems, the best solution is to encapsulate the figures
+% in the \LaTeX{} source:
+% \begin{enumerate}
+%   \item It is much easier to remember to update an illustration if
+%     one doesn't have to switch files in the editor.
+%   \item One does not have to invent illustrative file names, if
+%     the computer keeps track of them.
+% \end{enumerate}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Usage}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Commands and Environments}
+% \label{sec:commands}
+%
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section*{Distribution}
+% \label{sec:distribution}
+%
 % \section{WIP: Manual}
 % In contrast to \MP{} Sketch can't produce different output files out of
 % one sketch source file. This means every sketch figure has to be in its
 % own file.
 %
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \StopEventually{\PrintIndex\PrintChanges}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
-% \changes{v0.01}{2010/03/01}
+% \changes{v0.01}{2010/03/01}{Version 0.01 work in progress}
 %
 % This project is greatly inspired and based on EMP. EMP is a LaTeX package
 % to provide a convenient way to work with metapost files and code from
@@ -460,8 +585,19 @@
   \else
     \errmessage{esk: "#1" is undefined!}
   \fi
-
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tok@newtoks}
+% Since |\newtoks| is an |\outer| macro, it is not allowed in definitios.
+% Because of that we define a wrapper:
+%    \begin{macrocode}
+\def\tok@newtoks{
+  \csname newtoks\endcsname}
+%</style>
+%    \end{macrocode}
+% \end{macro}
 %
 %
 \def\futurenospacelet#1{\def\cs{#1}%
@@ -472,12 +608,6 @@
   \else\let\next=\nexttoken\fi \next}
 \def\stepthree{\afterassignment\stepone\let\next= }
 %
-%
-%</style>
-%    \end{macrocode}
-% \end{macro}
-%
-\def\tok@newtoks{\csname newtoks\endcsname} %\newtoks not allowed in definitios since it is an \outer command
 %
 % \Finale
 %
@@ -491,6 +621,13 @@
 \documentclass[a4paper]{article}
 \usepackage{doc}
 \usepackage{amsmath}
+%    \end{macrocode}
+% The logos come out much nicer if you have |mflogo| installed:
+%    \begin{macrocode}
+\def\ESK{\textsf{ESK}}%
+\def\SK{\textsf{Sketch}}%
+\def\MP{\textsf{META}\-\textsf{POST}}%
+
 %    \end{macrocode}
 % Protect against certain obsolete versions of the |graphics| and the |kvsetkeys| package:
 %    \begin{macrocode}
