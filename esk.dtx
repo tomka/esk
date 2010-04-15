@@ -492,19 +492,7 @@
 \usepackage{doc}
 \usepackage{amsmath}
 %    \end{macrocode}
-% The \MF{} and \MP{} logos come out much nicer if you have |mflogo|
-% installed:
-%    \begin{macrocode}
-\IfFileExists{mflogo.sty}%
-  {\usepackage{mflogo}%
-   \def\FMF{\texttt{feyn}\textlogo{MF}}%
-   \def\ESK{\textlogo{ESK}}}%
-  {\def\MF{\textsf{META}\-\textsf{FONT}}%
-   \def\MP{\textsf{META}\-\textsf{POST}}%
-   \def\FMF{\texttt{feyn}\textsf{MF}}%
-   \def\ESK{\textsf{ESK}}}
-%    \end{macrocode}
-% Protect against certain obsolete versions of the |graphics| package:
+% Protect against certain obsolete versions of the |graphics| and the |kvsetkeys| package:
 %    \begin{macrocode}
 \usepackage{graphics}[1994/12/15]
 \usepackage{kvsetkeys}[2007/09/29]
