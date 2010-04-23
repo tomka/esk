@@ -74,7 +74,7 @@
 
 	Some examples from http://www.fauskes.net/nb/introduction-to-sketch/	
 	\begin{center}
-		\begin{esk}
+		\begin{esk}{}
 			def scene{
 			    polygon[fill=red!20,draw=red]
 				(0,0,1)(1,0,0)(0,1,0)
@@ -91,7 +91,7 @@
 			\begin{SubFloat}{\label{fig:verbone}A coordinate system.}
 				\begin{minipage}[t]{1.5in}
 					\centering
-					\begin{esk}(general,axes)
+					\begin{esk}{general,axes}
 						def scene {
 							{axes}
 						}
@@ -102,7 +102,7 @@
 			\begin{SubFloat}{\label{fig:verbtwo}A tetrahydron.}
 				\begin{minipage}[t]{1.5in}
 					\centering
-					\begin{esk}(general,pyramid)
+					\begin{esk}{general,pyramid}
 						def scene {
 							{pyramid}
 						}
@@ -113,7 +113,7 @@
 			\begin{SubFloat}{\label{fig:verbthree}Both combined.}
 				\begin{minipage}[t]{1.5in}
 					\centering
-					\begin{esk}(general,axes,pyramid)
+					\begin{esk}{general,axes,pyramid}
 						def scene {
 							{axes}
 							{pyramid}

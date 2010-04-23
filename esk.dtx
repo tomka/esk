@@ -112,6 +112,24 @@
 %   \item One does not have to invent illustrative file names, if
 %     the computer keeps track of them.
 % \end{enumerate}
+% Therefore \ESK{} was written to allow to encapsulate
+% \SK{} into \LaTeX.
+% Nevertheless, it is argueble that complex \SK{} figures may be easier
+% handled in a seperate file. That is because it does not directly
+% improve readability for ones source code to have the \SK{} code mixed
+% with \LaTeX. But that's purely a matter of taste. To have \SK{} code in
+% seperate files be included in your build process you could do the
+% following:
+% \begin{enumerate}
+%   \item have your \SK{} code in a file, e. g. \emph{nice\_scene.sk}
+%   \item include the file \emph{nice\_scene.sk.tex} in your document
+%      source
+%   \item configure your build in a way to automatically call \SK{} on all
+%      \emph{\textasteriskcentered.sk} files, e.g in a Makefile: \newline
+%        { |for i in `ls *.sk`; do sketch -o "$$i.tex" "$$i"; done| }  
+% \end{enumerate}
+% At least for less complex graphics it is more convinient to use \ESK{}
+% and thus stay consistent more easily.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Usage}
@@ -119,6 +137,66 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Commands and Environments}
 % \label{sec:commands}
+%
+% \DescribeEnv{esk}
+% The |esk| environment contains the description of a single
+% figure that will be placed at the location of the environment.
+% The macro has two optional arguments. The first is the name of
+% the figure and defaults to |\jobname|. It is used as the base
+% name for file names. The second one consists of a comma separated
+% list of names previously defined with |\eskdef|. Note that the
+% names have to be put in parentheses (not brackets or braces).
+% Those definitions will be prepended to the \SK-commands.
+% \begin{quote}
+% \begin{flushleft}
+%   |\begin{esk}[|\meta{name}|](|\meta{def 1}|,|\meta{def 2}|,...)|\\
+%     \qquad\meta{\SK-commands}\\
+%   |\end{esk}|
+% \end{flushleft}
+% \end{quote}
+%
+% \DescribeEnv{eskdef}
+% The |eskdef| environment acts as a container for \SK-commands.
+% In contrast to |esk| nothing is written to a file or drawn, but
+% kept in a token list register to recall it later on. Thus,
+% reoccuring patterns can be factored out and used as argument
+% in an |esk| environment. This is useful, because these
+% environments use the |verbatim| package and can therefore
+% \emph{not} be used directly as an argument to other macros.
+% \begin{quote}
+% \begin{flushleft}
+%   |\begin{eskdef}{|\meta{name}|}|\\
+%     \qquad\meta{\SK-commands}\\
+%   |\end{eskdef}|
+% \end{flushleft}
+% \end{quote}
+%
+% \DescribeMacro{\eskprelude}
+% Define a \SK{} prelude to be written to the top of every \SK{}
+% file. The default is an empty prelude. Keep in mind that verbatim
+% arguments are not allowed.
+%
+% \DescribeMacro{\eskaddtoprelude}
+% Add to the \SK{} prelude.
+% E. g.~|\eskaddtoprelude{def O (0,0,0)}| makes sure the varible O
+% is available in all |esk| environments (and thus in every generated
+% \SK{} file). Of cause, this could also be achived with |eskdef|.
+%
+% \DescribeMacro{\eskglobals}
+% Define global \SK{} properties that get passed to the |global {...}|
+% method of \SK. This defaults to |language tikz|.
+%
+% \DescribeMacro{\eskaddtoglobals}
+% Add something to the global parameters of \SK.
+%
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Examples}
+% \label{sec:examples}
+%
+% For a simple example, let's draw a smiling and a frowning face.
+% Since they are identical except for the mouth, we prepare a macro
+% for the common parts:
 %
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
