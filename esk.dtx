@@ -189,15 +189,333 @@
 % \DescribeMacro{\eskaddtoglobals}
 % Add something to the global parameters of \SK.
 %
-%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Examples}
 % \label{sec:examples}
 %
-% For a simple example, let's draw a smiling and a frowning face.
-% Since they are identical except for the mouth, we prepare a macro
-% for the common parts:
+% For a simple example, let's draw a pyramid in a coordinate
+% system. Since our scene should be a composition of coordinate axes
+% and the geometry and the parts might be reusable, we prepare
+% definitions for the single parts. First the coordinate system:
+%    \begin{macrocode}
+%<*sample>
+\begin{eskdef}{axes}
+  def three_axes {
+    % draw the axes
+    def ax (dx,0,0)
+    def ay (0,dy,0)
+    def az (0,0,dz)
+    line[arrows=<->,line width=.4pt](ax)(O)(ay)
+    line[arrows=->,line width=.4pt](O)(az)
+    % annote axes
+    special |\path #1 node[left] {$z$}
+                   #2 node[below] {$x$}
+                   #3 node[above] {$y$};|(az)(ax)(ay)
+  }
+\end{eskdef}
+%    \end{macrocode}
+%\begin{eskdef}{axes}
+  def three_axes {
+    % draw the axes
+    def ax (dx,0,0)
+    def ay (0,dy,0)
+    def az (0,0,dz)
+    line[arrows=<->,line width=.4pt](ax)(O)(ay)
+    line[arrows=->,line width=.4pt](O)(az)
+    % annote axes
+    special |\path #1 node[left] {$z$}
+                   #2 node[below] {$x$}
+                   #3 node[above] {$y$};|(az)(ax)(ay)
+  }
+%\end{eskdef}
+% Now the pyramid:
+%    \begin{macrocode}
+\begin{eskdef}{pyramid}
+  def pyramid {
+    def p0 (0,2)
+    def p1 (1.5,0)
+    def N 4
+    def seg_rot rotate(360 / N, [J])
+    % draw the pyramid by rotating a line about the J axis
+    sweep[fill=red!20, fill opacity=0.5] { N<>, [[seg_rot]] }
+       line[cull=false,fill=blue!20,fill opacity=0.5](p0)(p1)
+  }
+\end{eskdef}
+%    \end{macrocode}
+%\begin{eskdef}{pyramid}
+  def pyramid {
+    def p0 (0,2)
+    def p1 (1.5,0)
+    def N 4
+    def seg_rot rotate(360 / N, [J])
+    % draw the pyramid by rotating a line about the J axis
+    sweep[fill=red!20, fill opacity=0.5] { N<>, [[seg_rot]] }
+       line[cull=false,fill=blue!20,fill opacity=0.5](p0)(p1)
+  }
+%\end{eskdef}
+% In the definitions have some variable been used that have
+% not been declared so far (|O|, |dx|, |dy|, |dz|, |J|). They have
+% been introduced to make the definitions more versatile. In
+% order to draw the scene their declarition has to be prepended
+% to our output:
+%    \begin{macrocode}
+\eskaddtoprelude{def O (0,0,0)}
+\eskaddtoprelude{def dx 2.3}
+\eskaddtoprelude{def dy 2.5}
+\eskaddtoprelude{def dz dx}
+\eskaddtoprelude{def J [0,1,0]}
+%    \end{macrocode}
+%\eskaddtoprelude{def O (0,0,0)}
+%\eskaddtoprelude{def dx 2.3}
+%\eskaddtoprelude{def dy 2.5}
+%\eskaddtoprelude{def dz dx}
+%\eskaddtoprelude{def J [0,1,0]}
 %
+% Now the previously created definitions can be used to do the
+% actual drawing. First, the coordinate system on its own:
+%\begin{center}
+%\begin{esk}(axes)
+  def scene {
+    {three_axes}
+  }
+  put { view((10,4,2)) } {scene}
+%\end{esk}
+%\end{center}
+%    \begin{macrocode}
+\begin{esk}(axes)
+  def scene {
+    {three_axes}
+  }
+  put { view((10,4,2)) } {scene}
+\end{esk}
+%    \end{macrocode}
+% Now the pyramid (note, the transparency effect will only be
+% visible in a pdf):
+%\begin{center}
+%\begin{esk}(pyramid)
+  def scene {
+    {pyramid}
+  }
+  put { view((10,4,2)) } {scene}
+%\end{esk}
+%\end{center}
+%    \begin{macrocode}
+\begin{esk}(pyramid)
+  def scene {
+    {pyramid}
+  }
+  put { view((10,4,2)) } {scene}
+\end{esk}
+%    \end{macrocode}
+% Finally both:
+%\begin{center}
+%\begin{esk}(axes,pyramid)
+  def scene {
+    {three_axes}
+    {pyramid}
+  }
+  put { view((10,4,2)) } {scene}
+%\end{esk}
+%\end{center}
+%    \begin{macrocode}
+\begin{esk}(axes,pyramid)
+  def scene {
+    {pyramid}
+    {three_axes}
+  }
+  put { view((10,4,2)) } {scene}
+\end{esk}
+%    \end{macrocode}
+% A more complex example schowing a super short baseline
+% positioning system:
+%\begin{center}
+%\begin{esk}(axes)
+def ee 0.0001
+def sz 4 % length of each axis
+def axes {
+    line [arrows=<->,draw=blue,line width=0.5pt] (sz,0,0)(O)(0,sz,0)
+    line [arrows=->,draw=blue,line width=.5pt]  (O)(0,0,sz)
+    special |\node[above] at #1 {\scriptsize $z$};|(0,0,sz)
+    special |\node[above] at #1 {\scriptsize $x$};|(0,sz,0)
+    special |\node[above] at #1 {\scriptsize $y$};|(sz,0,0)}
+
+def jR 1
+def jR_inner 0.5/2
+def jH 2/2
+
+def cylinder put{rotate(90,[1,0,0])}{
+  def n 10   
+  sweep[draw=gray, line width= 0.01pt]{n<>, rotate(360/n,[0,1,0])}
+    line[draw=black,fill=lightgray](jR,0)(jR,jH)}
+
+def box put{translate([-1.5,-0.5,0])}{
+  def n 1   
+  sweep[fill=lightgray,  draw=gray]
+        {n,translate([0,n,0])}
+    sweep[fill=lightgray,  draw=gray]
+        {n, translate([n,0,0])}line[fillcolor=gray](1,0,0)(1,0,1)}
+
+def sphere put{rotate(90,[0,1,0])}{
+   def n_faces 12
+   sweep[fill=red, line width= 0.1pt] { n_faces, rotate(360/n_faces, [1,0,0])}
+       sweep {n_faces, rotate(360/n_faces)}(0,1)}
+
+def beacon {
+    put {scale(0.1)}{sphere}
+    put {translate([0,0,-1]) then scale([0.05,0.05,0.3])}{cylinder}}
+
+def ax 30
+def ay 35
+def R 5
+
+% Compute position of transponder
+def T (R*sin(ax),R*sin(ay),0)   
+% Compute transducer position
+def P (0,0,sqrt(R^2-((T)'x^2+(T)'y^2)))  
+
+def T_x ((T)'x,0)
+def T_y (0,(T)'y)
+
+def SSBLScene {
+    {axes}
+    % Draw projection of R
+    line [line style=dashed,draw=gray] (T_x)(T)
+    line [line style=dashed,draw=gray] (T_y)(T)
+    line [line style=dashed,draw=gray] (T_y)(P)
+    line [line style=dashed,draw=gray] (T_x)(P)
+    line [draw=red] (P)(T)
+    % draw labels
+    special |\node[below right] at #1 {Transponder};|(T)  
+    special |\node[right] at #1 {$\mathrm{Transducer}$};|(P)  
+    def dT unit((T)-(P))
+    def dT_y unit((T_y) -(P))
+    def dT_x unit((T_x) -(P))
+    
+    % Draw angle annotations
+    def pp (P)+[dT]*1.5
+    def N [dT]*[dT_y]
+    def m rotate(ax/2,(P),[dT]*[dT_y])
+    def n [dT] then rotate(ax/2,(P),[dT]*[dT_y])
+    def nb [dT] then rotate(ax,(P),[dT]*[dT_y])
+    def ppm (P)+[n]*1.5
+    def ppb (P)+[nb]*1.5
+    
+    special |\draw #1..controls #2 .. node[near end,below] {$\theta$} #3;\;|(pp)(ppm)(ppb)
+    % \uput[-60]#2{$\theta$}|(pp)(ppm)(ppb)
+    def nc [dT] then rotate(ay/2,(P),[dT]*[dT_x])
+    def nbc [dT] then rotate(ay,(P),[dT]*[dT_x])
+    def ppmc (P)+[nc]*1.5
+    def ppbc (P)+[nbc]*1.5
+    special |\draw #1.. controls #2.. #3;\node[below] at #2 {$\phi$};|(pp)(ppmc)(ppbc)
+    def mT (P)+((T)-(P))/2
+    
+    put {translate((T)-(O))} {beacon}
+    put {translate((P)-(O))}{put {scale(0.1)}{sphere}}}
+
+def viewpoint (15,10,5)
+def lookat (0, 0, 0)
+def upvector [0,0,1]
+
+put{ view((viewpoint),(lookat), [upvector])} {
+    {SSBLScene}}
+%\end{esk}
+%\end{center}
+%    \begin{macrocode}
+\begin{esk}
+def ee 0.0001
+def sz 4 % length of each axis
+def axes {
+    line [arrows=<->,draw=blue,line width=0.5pt] (sz,0,0)(O)(0,sz,0)
+    line [arrows=->,draw=blue,line width=.5pt]  (O)(0,0,sz)
+    special |\node[above] at #1 {\scriptsize $z$};|(0,0,sz)
+    special |\node[above] at #1 {\scriptsize $x$};|(0,sz,0)
+    special |\node[above] at #1 {\scriptsize $y$};|(sz,0,0)}
+
+def jR 1
+def jR_inner 0.5/2
+def jH 2/2
+
+def cylinder put{rotate(90,[1,0,0])}{
+  def n 10   
+  sweep[draw=gray, line width= 0.01pt]{n<>, rotate(360/n,[0,1,0])}
+    line[draw=black,fill=lightgray](jR,0)(jR,jH)}
+
+def box put{translate([-1.5,-0.5,0])}{
+  def n 1   
+  sweep[fill=lightgray,  draw=gray]
+        {n,translate([0,n,0])}
+    sweep[fill=lightgray,  draw=gray]
+        {n, translate([n,0,0])}line[fillcolor=gray](1,0,0)(1,0,1)}
+
+def sphere put{rotate(90,[0,1,0])}{
+   def n_faces 12
+   sweep[fill=red, line width= 0.1pt] { n_faces, rotate(360/n_faces, [1,0,0])}
+       sweep {n_faces, rotate(360/n_faces)}(0,1)}
+
+def beacon {
+    put {scale(0.1)}{sphere}
+    put {translate([0,0,-1]) then scale([0.05,0.05,0.3])}{cylinder}}
+
+def ax 30
+def ay 35
+def R 5
+
+% Compute position of transponder
+def T (R*sin(ax),R*sin(ay),0)   
+% Compute transducer position
+def P (0,0,sqrt(R^2-((T)'x^2+(T)'y^2)))  
+
+def T_x ((T)'x,0)
+def T_y (0,(T)'y)
+
+def SSBLScene {
+    {axes}
+    % Draw projection of R
+    line [line style=dashed,draw=gray] (T_x)(T)
+    line [line style=dashed,draw=gray] (T_y)(T)
+    line [line style=dashed,draw=gray] (T_y)(P)
+    line [line style=dashed,draw=gray] (T_x)(P)
+    line [draw=red] (P)(T)
+    % draw labels
+    special |\node[below right] at #1 {Transponder};|(T)  
+    special |\node[right] at #1 {$\mathrm{Transducer}$};|(P)  
+    def dT unit((T)-(P))
+    def dT_y unit((T_y) -(P))
+    def dT_x unit((T_x) -(P))
+    
+    % Draw angle annotations
+    def pp (P)+[dT]*1.5
+    def N [dT]*[dT_y]
+    def m rotate(ax/2,(P),[dT]*[dT_y])
+    def n [dT] then rotate(ax/2,(P),[dT]*[dT_y])
+    def nb [dT] then rotate(ax,(P),[dT]*[dT_y])
+    def ppm (P)+[n]*1.5
+    def ppb (P)+[nb]*1.5
+    
+    special |\draw #1..controls #2 .. node[near end,below] {$\theta$} #3;\;|(pp)(ppm)(ppb)
+    % \uput[-60]#2{$\theta$}|(pp)(ppm)(ppb)
+    def nc [dT] then rotate(ay/2,(P),[dT]*[dT_x])
+    def nbc [dT] then rotate(ay,(P),[dT]*[dT_x])
+    def ppmc (P)+[nc]*1.5
+    def ppbc (P)+[nbc]*1.5
+    special |\draw #1.. controls #2.. #3;\node[below] at #2 {$\phi$};|(pp)(ppmc)(ppbc)
+    def mT (P)+((T)-(P))/2
+    
+    put {translate((T)-(O))} {beacon}
+    put {translate((P)-(O))}{put {scale(0.1)}{sphere}}}
+
+def viewpoint (15,10,5)
+def lookat (0, 0, 0)
+def upvector [0,0,1]
+
+put{ view((viewpoint),(lookat), [upvector])} {
+    {SSBLScene}}
+\end{esk}
+%</sample>
+%    \end{macrocode}
+% Both examples have been taken from \cite{Fauske}, albeit some comments
+% have been stripped. The first one by permission and the second one due
+% to the MIT licencing of the soure.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section*{Distribution}
@@ -718,6 +1036,7 @@
 %    \begin{macrocode}
 \usepackage{graphics}[1994/12/15]
 \usepackage{kvsetkeys}[2007/09/29]
+\usepackage{tikz}
 \usepackage{esk}
 %    \end{macrocode}
 %    \begin{macrocode}
