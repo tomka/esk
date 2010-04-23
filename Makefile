@@ -62,7 +62,7 @@ RUN_MAKEINDEX = \
 
 all: esk.sty esk.drv
 
-man: eskman.dvi
+man: eskman.ps
 
 ps: esk.ps
 
@@ -96,10 +96,24 @@ esk.dvi: esk.dtx esk.drv esk.sty
 	$(RUN_MAKEINDEX)
 	$(RESOLVE_XREF)
 
+eskman.ps: eskman.dvi
+	dvips eskman.dvi -o
+
 eskman.dvi: esk.dtx eskman.drv esk.sty
 	-$(LATEX) $*.drv
-	for i in `ls *.sk`; do $(SK) -o "$$i.tex" "$$i"; done
+	# call sketch, e. g. convert the sketch code to tex
+	# unfortunately Sketch produces comments, that is a
+	# problem because DTX is used and a single %  sign
+	# there has a meaning. Thus substitude each % sign
+	# with a %% sign:
+	for i in `ls *.sk`; do \
+		($(SK) -o "$$i.tex" "$$i" && \
+		cut -d "%" -f1 <"$$i.tex" >"$$i.tex.tmp" && \
+		rm "$$i.tex" && \
+		mv "$$i.tex.tmp" "$$i.tex") \
+	done
 	-$(LATEX) $*.drv
+	pdflatex $*.drv
 	$(RUN_MAKEINDEX)
 	$(RESOLVE_XREF)
 
