@@ -294,38 +294,25 @@
 %    \end{macrocode}
 % Standard preludes:
 %    \begin{macrocode}
-
-%% Create a new symbolic token register name "\esk@TeX"
+%% Create a new token register alias "\esk@prelude"
 %% If the indirct alias creation \newtoks is used, TeX selects a
 %% register to take and hides this technical detail from us.
-\newtoks\esk@TeX
-
-%% Again, create a new token register alias "\esk@prelude"
 \newtoks\esk@prelude
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\eskTeX}
-%   \begin{macro}{\eskaddtoTeX}
-%     \begin{macro}{\eskprelude}
-%       \begin{macro}{\eskaddtoprelude}
-%    \begin{macrocode}
-%% define a public "\eskTeX" macro that fills the \esk@TeX
-%% token register with its argument (#1) - thus, overrides it
-\def\eskTeX#1{\esk@TeX={#1}}
-%% defines a public "\eskadddtTeX macro that appends its argument
-%% to the token register \esk@TeX on a new line. ^^J is a replacement ascii
-%% representation for LF or line feed" (http://www.torsten-horn.de/techdocs/ascii.htm)
-\def\eskaddtoTeX#1{\esk@TeX=\expandafter{\the\esk@TeX^^J#1}}
+% \begin{macro}{\eskprelude}
+%   \begin{macro}{\eskaddtoprelude}
+%     \begin{macrocode}
 %% define a public \eskprelude macro that replaces the contents
 %% of the internal token register \esk@prelude with its argument
 \def\eskprelude#1{\esk@prelude={#1}}
 %% define a public \eskaddtoprelude macro that appends its argument
 %% to the internal \esk@prelude token register on a new line
+%% ^^J is a replacement ascii representation for LF or line feed
+%% (see: http://www.torsten-horn.de/techdocs/ascii.htm)
 \def\eskaddtoprelude#1{\esk@prelude=\expandafter{\the\esk@prelude^^J#1}}
 %    \end{macrocode}
-%       \end{macro}
-%     \end{macro}
 %   \end{macro}
 % \end{macro}
 
