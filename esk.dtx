@@ -357,10 +357,30 @@
 %    \end{macrocode}
 % \end{macro}
 %
+\let\leftparanthesis=(
+%
 % \begin{macro}{\esk@}
 %    \begin{macrocode}
 %% define a private \esk@ macro
-\def\esk@#1{%
+\def\esk@{
+  %% save tho next token into \next
+  %% and invoke \esk@impl
+  \futurelet\next\esk@impl
+}
+\def\esk@impl{%
+  %% check if there is an optional eskdef list argument
+  \ifx\next\leftparanthesis
+    %% get rid of the \else by invoking \expandafter
+    \expandafter\esk@impl@Arg
+  \else
+    %% get rid of the \fi by invoking \expandafter
+    \expandafter\esk@impl@NoArg
+  \fi
+}
+%% invokes \esk@impl@Arg with empty argument
+\def\esk@impl@NoArg{\esk@impl@Arg()}
+%% the actual implementation
+\def\esk@impl@Arg(#1){%
   \esk@start%
   \esk@includegraphics{\theeskfile}%
   %% process optional definition
