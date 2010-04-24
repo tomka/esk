@@ -98,20 +98,20 @@
 %
 % When adding illustrations to documents, one faces two bookkeeping
 % problems:
-% \begin{enumerate}
+% \begin{itemize}
 %   \item How to encourage oneself to keep the illustrations in sync
 %     with the text, when the document is updated?
 %   \item How to make sure that the illustrations appear on the right
 %     spot? 
-% \end{enumerate}
+% \end{itemize}
 % For both problems, the best solution is to encapsulate the figures
 % in the \LaTeX{} source:
-% \begin{enumerate}
+% \begin{itemize}
 %   \item It is much easier to remember to update an illustration if
 %     one doesn't have to switch files in the editor.
 %   \item One does not have to invent illustrative file names, if
 %     the computer keeps track of them.
-% \end{enumerate}
+% \end{itemize}
 % Therefore \ESK{} was written to allow to encapsulate
 % \SK{}~\cite{Sketch} into \LaTeX~\cite{LaTeX,Knuth}. It is based on
 % \texttt{emp}~\cite{emp} since it follows a similar approach for \MP{}
@@ -127,7 +127,7 @@
 %   \item include the file \emph{nice\_scene.sk.tex} in your document
 %      source
 %   \item configure your build in a way to automatically call \SK{} on all
-%      \emph{\textasteriskcentered.sk} files, e.g in a Makefile: \newline
+%      \emph{\textasteriskcentered.sk} files, e.g in a Makefile:\newline
 %        { |for i in `ls *.sk`; do sketch -o "$$i.tex" "$$i"; done| }  
 % \end{enumerate}
 % At least for less complex graphics it is more convinient to use \ESK{}
@@ -135,6 +135,42 @@
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Usage}
+%
+% This chapter desrcibes the different macros and environments provided
+% by the \ESK{} package. The |esk| environment is the one that actually
+% generates printable source code. Depending on what options have been
+% specified with |\eskglobals| and |\eskaddtoglobals| this is TikZ or
+% PSTricks code. If an |esk| environment is encountered, it gets
+% processed the following way:
+% \begin{enumerate}
+%   \item \label{proc:gen_name}Create a file name for the current figure
+%         out of the base name and a running figure number:
+%         $\langle$\textit{name}$\rangle$.$\langle$\textit{number}$\rangle$.sk
+%         (E. g. pyramid.1.sk)
+%   \item \begin{enumerate}
+%     \item \label{proc:tex_file_found} If a file exists that is named
+%           like written in \ref{proc:gen_name} but with an additional
+%           \textit{.tex} at the end (e. g. pyramid.1.sk.tex) it is
+%           treated as a \SK{} processed result file. Thus, it is
+%           included as a replacement for the environments content. 
+%     \item If such an item as in \ref{proc:tex_file_found} is not found
+%           a \SK{} file with the contents of the environment is saved
+%           to a file with the name generated in \ref{proc:gen_name}.
+%     \end{enumerate}
+% \end{enumerate}
+% In contrast to \MP{} \SK{} can't produce different output files out of
+% one source file. This means every \SK{} figure has to be put into its
+% own \SK{} file. As a consequence one has to process all generated \SK
+% files with \SK and one can not have one generated file for the whole
+% document. A possible way of managing the build (within a Makefile) of
+% a document then could be:
+% \begin{enumerate}
+%   \item Call |latex| on the document source
+%   \item Process all \SK{} files and stick to naming convention:\newline
+%        { |for i in `ls *.sk`; do sketch -o "$$i.tex" "$$i"; done| }
+%   \item Call either |latex| and |dvips| or |pdflatex| on the document
+%         source to actually see TikZ or PSTricks figures.
+% \end{enumerate}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Commands and Environments}
@@ -355,11 +391,18 @@
 % \section*{Distribution}
 % \label{sec:distribution}
 %
-% \section{WIP: Manual}
-% In contrast to \MP{} Sketch can't produce different output files out of
-% one sketch source file. This means every sketch figure has to be in its
-% own file.
-%
+% \ESK{} is available from host
+% \begin{quote}
+%   |www.voodooart.net|
+% \end{quote}
+% in the directory
+% \begin{quote}
+%   |pub/tex/esk|
+% \end{quote}
+% A work in progress under git control is available from
+% \begin{quote}
+%   |http://github.com/tomka/esk|
+% \end{quote}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \StopEventually{\PrintIndex\PrintChanges}
