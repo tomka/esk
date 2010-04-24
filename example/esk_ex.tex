@@ -37,8 +37,8 @@
 \maketitle
 
 	\tracingmacros=1
+	\eskaddtoprelude{def O (0,0,0)}
 	\begin{eskdef}{general}
-		def O (0,0,0) % origin
 		def J [0,1,0] % rotation axis
 		def dx 2.3
 		def dy 2.5
@@ -74,7 +74,7 @@
 
 	Some examples from http://www.fauskes.net/nb/introduction-to-sketch/	
 	\begin{center}
-		\begin{esk}{}
+		\begin{esk}
 			def scene{
 			    polygon[fill=red!20,draw=red]
 				(0,0,1)(1,0,0)(0,1,0)
@@ -91,7 +91,7 @@
 			\begin{SubFloat}{\label{fig:verbone}A coordinate system.}
 				\begin{minipage}[t]{1.5in}
 					\centering
-					\begin{esk}{general,axes}
+					\begin{esk}(general,axes)
 						def scene {
 							{axes}
 						}
@@ -102,7 +102,7 @@
 			\begin{SubFloat}{\label{fig:verbtwo}A tetrahydron.}
 				\begin{minipage}[t]{1.5in}
 					\centering
-					\begin{esk}{general,pyramid}
+					\begin{esk}(general,pyramid)
 						def scene {
 							{pyramid}
 						}
@@ -113,7 +113,7 @@
 			\begin{SubFloat}{\label{fig:verbthree}Both combined.}
 				\begin{minipage}[t]{1.5in}
 					\centering
-					\begin{esk}{general,axes,pyramid}
+					\begin{esk}(general,axes,pyramid)
 						def scene {
 							{axes}
 							{pyramid}
@@ -131,7 +131,7 @@
 		\begin{esk}
 			% truncated cone diagram
 			% Modified for PGF/TikZ
-			def O (0,0,0)
+			%def O (0,0,0)
 			def I [1,0,0]
 			def J [0,1,0]
 			def K [0,0,1]
