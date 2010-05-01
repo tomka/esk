@@ -115,11 +115,11 @@
 % \SK{}~\cite{Sketch} into \LaTeX~\cite{LaTeX,Knuth}. It is based on
 % \texttt{emp}~\cite{emp} since it follows a similar approach for \MP{}
 % \cite{MP}.
-% Nevertheless, it is argueble that complex \SK{} figures may be easier
-% handled in a seperate file. That is because it does not directly
+% Nevertheless, it is arguable that complex \SK{} figures may be easier
+% handled in a separate file. That is because it does not directly
 % improve readability for ones source code to have the \SK{} code mixed
 % with \LaTeX. But that's purely a matter of taste and complexity. To
-% have \SK{} code in seperate files be included in your build process
+% have \SK{} code in separate files be included in your build process
 % you could do the following:
 % \begin{enumerate}
 %   \item have your \SK{} code in a file, e. g. \emph{nice\_scene.sk}
@@ -129,13 +129,13 @@
 %      \emph{\textasteriskcentered.sk} files, e.g in a Makefile:\newline
 %        { |for i in `ls *.sk`; do sketch -o "$$i.tex" "$$i"; done| }  
 % \end{enumerate}
-% At least for less complex graphics it is more convinient to use \ESK{}
+% At least for less complex graphics it is more convenient to use \ESK{}
 % and thus stay consistent more easily.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Usage}
 %
-% This chapter desrcibes the different macros and environments provided
+% This chapter describes the different macros and environments provided
 % by the \ESK{} package. The |esk| environment is the one that actually
 % generates printable source code. Depending on what options have been
 % specified with |\eskglobals| and |\eskaddtoglobals| this is TikZ or
@@ -196,7 +196,7 @@
 % The |eskdef| environment acts as a container for \SK-commands.
 % In contrast to |esk| nothing is written to a file or drawn, but
 % kept in a token list register to recall it later on. Thus,
-% reoccuring patterns can be factored out and used as argument
+% reoccurring patterns can be factored out and used as argument
 % in an |esk| environment. This is useful, because these
 % environments use the |verbatim| package and can therefore
 % \emph{not} be used directly as an argument to other macros.
@@ -217,7 +217,7 @@
 % Add to the \SK{} prelude.
 % E. g.~|\eskaddtoprelude{def O (0,0,0)}| makes sure the varible O
 % is available in all |esk| environments (and thus in every generated
-% \SK{} file). Of cause, this could also be achived with |eskdef|.
+% \SK{} file). Of cause, this could also be achieved with |Eskimo|.
 %
 % \DescribeMacro{\eskglobals}
 % Define global \SK{} properties that get passed to the |global {...}|
@@ -245,7 +245,7 @@
     def az (0,0,dz)
     line[arrows=<->,line width=.4pt](ax)(O)(ay)
     line[arrows=->,line width=.4pt](O)(az)
-    % annote axes
+    % annotate axes
     special |\path #1 node[left] {$z$}
                    #2 node[below] {$x$}
                    #3 node[above] {$y$};|(az)(ax)(ay)
@@ -260,7 +260,7 @@
     def az (0,0,dz)
     line[arrows=<->,line width=.4pt](ax)(O)(ay)
     line[arrows=->,line width=.4pt](O)(az)
-    % annote axes
+    % annotate axes
     special |\path #1 node[left] {$z$}
                    #2 node[below] {$x$}
                    #3 node[above] {$y$};|(az)(ax)(ay)
@@ -294,7 +294,7 @@
 % In the definitions have some variable been used that have
 % not been declared so far (|O|, |dx|, |dy|, |dz|, |J|). They have
 % been introduced to make the definitions more versatile. In
-% order to draw the scene their declarition has to be prepended
+% order to draw the scene their declaration has to be prepended
 % to our output:
 %    \begin{macrocode}
 \eskaddtoprelude{def O (0,0,0)}
@@ -392,7 +392,7 @@
 %
 % \ESK{} is available from host
 % \begin{quote}
-%   |www.voodooart.net|
+%   |www.voodoo-arts.net|
 % \end{quote}
 % in the directory
 % \begin{quote}
@@ -436,8 +436,8 @@
 \def\fileversion{v0.9}
 %% Make clear what LaTeX version is needed: LaTeX2e
 \NeedsTeXFormat{LaTeX2e}
-%% Now define localy (visible in scope) a RCS (revision control system)
-%% parser macro and define out of this global varibles like filename, etc.
+%% Now define locally (visible in scope) a RCS (revision control system)
+%% parser macro and define out of this global variables like file name, etc.
 {\def\RCS#1#2\endRCS{%
 %% is the first parameter a "$%?
   \ifx$#1%
@@ -461,7 +461,7 @@
   Encapsulated Sketch LaTeX Package (\filemaintainer)]
 %    \end{macrocode}
 % Every option we don't understand is sent down to |graphics|.
-% Afterwars invoke the actual macro for each found and declared opton.
+% Afterwards invoke the actual macro for each found and declared opton.
 % Having finished, stop scanning for tokens.
 %    \begin{macrocode}
 %% Every option ("*") is passed down to the graphics package
@@ -514,7 +514,7 @@
 \newif\if@eskio
 \@eskiotrue
 % Define the next free file handle to be referenced by private macro |\@outesk|
-%% but do not open it (exampla file open: \openout\@outesk=TEXTFILE.TXT)
+%% but do not open it (example file open: \openout\@outesk=TEXTFILE.TXT)
 %% see: (http://books.google.de/books?id=bXLDwmIJNkUC&pg=PA283&lpg=PA283&dq=tex+%22\newwrite%22&source=bl&ots=xNXas4Y6Rz&sig=KrxZPqhl_0izHGvda9235RoyTHU&hl=de&ei=tKKGSszRGML6_AaNgaGWBw&sa=X&oi=book_result&ct=result&resnum=10#v=onepage&q=tex%20%22\newwrite%22&f=false)
 \newwrite\@outesk
 %    \end{macrocode}
@@ -567,7 +567,7 @@
 % Standard preludes:
 %    \begin{macrocode}
 %% Create a new token register alias "\esk@prelude"
-%% If the indirct alias creation \newtoks is used, TeX selects a
+%% If the indirect alias creation \newtoks is used, TeX selects a
 %% register to take and hides this technical detail from us.
 \newtoks\esk@prelude
 %    \end{macrocode}
@@ -679,7 +679,7 @@
   %% make sure that a sketch file is open
   \esk@checkfile
   %% call \esk@@def with our prev. defined temporary esk file name 
-  %% and gererate new \theeskfile and \theeskfile alias macros
+  %% and generate new \theeskfile and \theeskfile alias macros
   \esk@@def{\esk@@name}%
 }
 %    \end{macrocode}
@@ -777,7 +777,7 @@
 \newcommand{\eskdef}[1]{%
   %% TODO: Make it more robust by remembering old name
   %% and setting it back afterwards (if any), so it can
-  %% be used in esk envirnoments
+  %% be used in esk environments
 
   %% Define a new name
   \def\esk@@def@name{esk@def:#1}%
@@ -817,7 +817,7 @@
     %% if the token register is empty, override it...
     \global\esk@@def@reg=\expandafter{\the#1}
   \else
-    %% ...oterwise append the parameter to current token register
+    %% ...otherwise append the parameter to current token register
     \global\esk@@def@reg=\expandafter{\the\expandafter\token@reg\expandafter^^J\the#1}
   \fi
 }
@@ -834,7 +834,7 @@
 %
 % \begin{macro}{\esk@@def}
 %    \begin{macrocode}
-%% a macro vhich takes a file name as argument to
+%% a macro which takes a file name as argument to
 %% globally define new macros "esk@k:f:<arg>" and
 %% "esk@k:c:<arg>" which have the replacements
 %% \theeskfile and \theeskfig respectively.
@@ -869,7 +869,7 @@
 % \end{macro}
 %
 % \begin{macro}{\tok@newtoks}
-% Since |\newtoks| is an |\outer| macro, it is not allowed in definitios.
+% Since |\newtoks| is an |\outer| macro, it is not allowed in definitions.
 % Because of that we define a wrapper:
 %    \begin{macrocode}
 \def\tok@newtoks{
