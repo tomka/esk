@@ -7,7 +7,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \iffalse % esk.dtx - Encapsulated MetaPost for LaTeX(2e)
 % Copyright (C) 2010 by tom@voodoo-arts.net
-% $Id: emp.dtx,v 1.10 1997/11/12 21:14:41 ohl Exp $
 %
 % Esk is free software; you can redistribute it and/or modify it
 % under the terms of the GNU General Public License as published by 
@@ -232,10 +231,10 @@
 % \label{sec:examples}
 %
 % For a simple example, let's draw a pyramid in a coordinate
-% system. Since our scene
-% should be a composition of coordinate axes and the geometry
-% and the parts might be reusable, we prepare definitions for
-% the single parts. First the coordinate system:
+% system. Since our scene should be a composition of coordinate
+% axes and the geometry, we prepare definitions for the single
+% parts. In that way the parts will be reusable. First the
+% coordinate system:
 %    \begin{macrocode}
 %<*sample>
 \begin{eskdef}{axes}
@@ -366,8 +365,8 @@
 \end{esk}
 %</sample>
 %    \end{macrocode}
-% With permission of Kjell Magne Fauske, this example has been taken
-% from \cite{Fauske}.
+% With permission of Kjell Magne Fauske, the source code for this
+% example scene has been taken from \cite{Fauske}.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \begin{thebibliography}{99}
@@ -409,7 +408,7 @@
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
-% \changes{v0.01}{2010/03/01}{Version 0.01 work in progress}
+% \changes{v0.9}{2010/04/24}{Version 0.9}
 %
 % This project is greatly inspired and based on EMP. EMP is a LaTeX package
 % to provide a convenient way to work with metapost files and code from
@@ -434,7 +433,7 @@
 %%   - \string<\macro> returns the "macro" (the name of a macro)
 %%
 %% locally define the macro \fileversion (no parameters, replacement: v1.00)
-\def\fileversion{v0.01}
+\def\fileversion{v0.9}
 %% Make clear what LaTeX version is needed: LaTeX2e
 \NeedsTeXFormat{LaTeX2e}
 %% Now define localy (visible in scope) a RCS (revision control system)
@@ -453,7 +452,7 @@
    \gdef\filerevision{#3}%
    \gdef\filedate{#4}%
    \gdef\filemaintainer{#6}}%
-\RCS $Id: esk.dtx,v 0.10 2009/08/15 21:14:41 kazimiers Exp $ \endRCS}%
+\RCS $Id: esk.dtx,v 0.9 2010/04/24 21:14:41 kazimiers Exp $ \endRCS}%
 %    \end{macrocode}
 %
 % And now the standard procedure:
