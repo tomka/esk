@@ -542,68 +542,80 @@
 %    \end{macrocode}
 %
 % \begin{macro}{\eskfile}
-% This environment encloses each Sketch input file.  The single optional
-% argument gives the name of the file and defaults to |\jobname|.
+% This environment encloses each \SK{} input file.  The single optional
+% argument gives the name of the file and defaults to |\jobname|. This will
+% probably not be used explicitely when defining esk figures. It is invoked
+% automitically with an appropriate name for a figure. The macro |\theeskfile|
+% gets locally defined and stores the base name for a file.
 %    \begin{macrocode}
 \newcommand{\eskfile}[1][\jobname]{%
   \def\theeskfile{#1}%
 %    \end{macrocode}
-% Open the Sketch file.  If we're running under AMS-\LaTeX, turn off
-% I/O during the first pass over equation environments.
+% Open the Sketch file. If output is enabled, check if we're running under
+% AMS-\LaTeX and if that is the case turn off I/O during the first pass over
+% equation environments. This is done by looking for |\ifmeasuring@| of
+% AMS-\LaTeX and, if found, replacing all "\if@eskio" checks with it. 
 %    \begin{macrocode}
-  %% Is @eskio set/true?
   \if@eskio
-    %% Is "ifmeasuring@" undefined?
     \@ifundefined{ifmeasuring@}%
       {}%
       {\def\if@eskio{\ifmeasuring@\else}}%
-    %% Assign a new output file (our "\theeskfile") to our
-    %% "@outesk" file number
+%    \end{macrocode}
+% A a new output file is linked to our |\@outesk| file  number. The name of that
+% file is the content of |\theeskfile| with extension \textit{.sk}. Afterwards
+% a start comment is written to the new file.
+%    \begin{macrocode}
     \immediate\openout\@outesk=\theeskfile.sk\relax
     %% And write start comment out immediately
     \eskwrite{\p@rcent\p@rcent\p@rcent\space \theeskfile.sk -- %
               do not edit, generated automatically by \jobname.tex}%
 %    \end{macrocode}
-% append |\begin{document}| to a non-empty |\LaTeX| prelude and write
-% it out:
-% \begin{macrocode}
-    %% if "\esk@prelude" token register is empty, "\the\..." will be
-    %% replaced by an empty sting and "\ifx" will yield in true
-    %% (because * equals *), and the "\else" branch will _not_ be called.
-    %% If the token register is not empty (and does not start with
-    %% an asterisk) the \else-branch is called.
+% The |esk@prelude| token list register stores a prelude that should be put at
+% the beginning of the new file. If the register is empty, the expansion of it
+% (|\the\esk@prelude|) will be empty. This mens the |\ifx| condition is met,
+% because the actual ckeck is now if |*| equals |*|. Hence the |\else| branch
+% will \emph{not} be called. If the token register is not empty (and does not
+% start with an asterisk) the |\else| branch is used..
+%    \begin{macrocode}
     \expandafter\ifx\expandafter*\the\esk@prelude*\else
       \eskwrite{\the\esk@prelude}%
     \fi
   \fi}
-
-% Define |\theeskfile|, referencing the name of the currently opened file,
-% to be |\relax| (i. e. stop reading tokens). This should be the value if
-% no file is opened.
+%    \end{macrocode}
+%
+% Define |\theeskfile|, later redefined with the name of the currently opened
+% file, to be |\relax| (i. e. stop reading tokens). This should be the value
+% if no file is opened.
+%    \begin{macrocode}
 \let\theeskfile\relax
-% Define a new counter |\eskfig| (initialized with 0) to
-% count the single esk figures.
+%    \end{macrocode}
+% Define a new counter |\eskfig| to count the single esk figures. It is
+% initialized with 0.
+%    \begin{macrocode}
 \newcounter{eskfig}
 %    \end{macrocode}
-% Standard preludes:
+%
+% Let \TeX{} create a new token list register alias |\esk@prelude|. It stores
+% an optional prelude for the files written out. If the indirect alias
+% creation |\newtoks| is used, \TeX{} selects a free register and hides the
+% technical detail from us.
 %    \begin{macrocode}
-%% Create a new token register alias "\esk@prelude"
-%% If the indirect alias creation \newtoks is used, TeX selects a
-%% register to take and hides this technical detail from us.
 \newtoks\esk@prelude
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\eskprelude}
 %   \begin{macro}{\eskaddtoprelude}
-%     \begin{macrocode}
-%% define a public \eskprelude macro that replaces the contents
-%% of the internal token register \esk@prelude with its argument
+% Define a public |\eskprelude| macro that replaces the contents of the
+% internal token list register |\esk@prelude| with the argument passed.
+%    \begin{macrocode}
 \def\eskprelude#1{\esk@prelude={#1}}
-%% define a public \eskaddtoprelude macro that appends its argument
-%% to the internal \esk@prelude token register on a new line
-%% ^^J is a replacement ascii representation for LF or line feed
-%% (see: http://www.torsten-horn.de/techdocs/ascii.htm)
+%    \end{macrocode}
+% Define a public macro that appends its argument to the internal
+% |\esk@prelude| token list register. The text is added on a new line.
+% This is accomplished by using |^^J|, a replacement ascii representation
+% for LF (line feed)\footnote{e.g. see: http://www.torsten-horn.de/techdocs/ascii.htm}.
+%    \begin{macrocode}
 \def\eskaddtoprelude#1{\esk@prelude=\expandafter{\the\esk@prelude^^J#1}}
 %    \end{macrocode}
 %   \end{macro}
