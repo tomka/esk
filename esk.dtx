@@ -1,11 +1,7 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% ESK - Encapsulated Sketch Pictures
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% This project is greatly inspired and based on EMP. EMS is a LaTeX
-%% package to provide a convenient way to work with metapost files and
-%% code from inside LaTeX documents.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \iffalse % esk.dtx - Encapsulated MetaPost for LaTeX(2e)
+% \iffalse meta-comment
+%
+% esk.dtx - Encapsulated MetaPost for LaTeX(2e)
+%
 % Copyright (C) 2010 by tom@voodoo-arts.net
 %
 % Esk is free software; you can redistribute it and/or modify it
@@ -22,27 +18,16 @@
 % along with this program; if not, write to the Free Software
 % Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 %
+% This project is greatly inspired and based on EMP. EMP is a LaTeX
+% package to provide a convenient way to work with metapost files and
+% code from inside LaTeX documents.
+%
 % \fi
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%% \CheckSum{291}
-%% \CharacterTable
-%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%%   Digits        \0\1\2\3\4\5\6\7\8\9
-%%   Exclamation   \!     Double quote  \"     Hash (number) \#
-%%   Dollar        \$     Percent       \%     Ampersand     \&
-%%   Acute accent  \'     Left paren    \(     Right paren   \)
-%%   Asterisk      \*     Plus          \+     Comma         \,
-%%   Minus         \-     Point         \.     Solidus       \/
-%%   Colon         \:     Semicolon     \;     Less than     \<
-%%   Equals        \=     Greater than  \>     Question mark \?
-%%   Commercial at \@     Left bracket  \[     Backslash     \\
-%%   Right bracket \]     Circumflex    \^     Underscore    \_
-%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
-%%   Right brace   \}     Tilde         \~}
-%%
+%% \CheckSum{0}
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -414,111 +399,147 @@
 % to provide a convenient way to work with metapost files and code from
 % inside LaTeX documents.
 %
-% It's is good practice to identify this version of the document style
-% option.  We do this by parsing an RCS |Id| string and storing the
-% result in the conventional \TeX{} control sequences:
-%    \begin{macrocode}
-%<*style>
-%
-%%
+% \iffalse meta-comment
 %% TeX hints:
 %%   - @ is considered a normal letter in packages and classes
 %%   - There are 256 32Bit \count<num> registers (i. e. \count0=42),
-%%     can be expanded with \the<register> (i.e. \the\count0) 
+%%     can be expanded with \the<register> (i.e. \the\count0)
 %%   - \relax ends scanning for tokens
-%%     (i.e. \count0=\macro 42 <> \count0=\macro\relax 42) 
+%%     (i.e. \count0=\macro 42 <> \count0=\macro\relax 42)
 %%   - A macro defined with can has a maximum of 9 arguments
 %%   - \gdef is shortcut for \global\def
 %%     \xdef is shortcut for \global\edef
 %%   - \string<\macro> returns the "macro" (the name of a macro)
-%%
-%% locally define the macro \fileversion (no parameters, replacement: v1.00)
+%% Doc hints:
+%%   - There must be _exactly_ four spaces between the "%" and the
+%%     "\begin{macrocode}" or "\end{macrocode}.  Otherwise, Doc
+%%     won't detect the end of the code fragment.
+%%   - The lines of code withen \begin{macrocode}...\end{macrocode}
+%%     get written exactly as is to the .ins file, with no %-stripping.
+% \fi
+%
+% It's is good practice to identify this version of the document style
+% option.  We do this by parsing an RCS |Id| string and storing the
+% result in the conventional \TeX{} control sequences. The parsing macro
+% is only visible lecally (within the surrounding scope), but generated
+% control sequences like |\filename| are defined globally (due to the
+% use of |\gdef|):
+%    \begin{macrocode}
+%<*style>
 \def\fileversion{v0.9}
-%% Make clear what LaTeX version is needed: LaTeX2e
-\NeedsTeXFormat{LaTeX2e}
-%% Now define locally (visible in scope) a RCS (revision control system)
-%% parser macro and define out of this global variables like file name, etc.
 {\def\RCS#1#2\endRCS{%
-%% is the first parameter a "$%?
+  % is the first parameter a "$%?
   \ifx$#1%
     \@RCS $#2 \endRCS
   \else
     \@RCS $*: #1#2$ \endRCS
   \fi}%
  \def\@RCS $#1: #2,v #3 #4 #5 #6 #7$ \endRCS{%
-%% global defines (independent of current scope) of file attributes
-%% (http://en.wikibooks.org/wiki/TeX/gdef)
+   % global defines (independent of current scope) of file attributes
    \gdef\filename{#2}%
    \gdef\filerevision{#3}%
    \gdef\filedate{#4}%
    \gdef\filemaintainer{#6}}%
 \RCS $Id: esk.dtx,v 0.9 2010/04/24 21:14:41 kazimiers Exp $ \endRCS}%
 %    \end{macrocode}
-%
+% Make clear what LaTeX version is needed:
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+%    \end{macrocode}
 % And now the standard procedure:
 %    \begin{macrocode}
 \ProvidesPackage{esk}[\filedate\space\fileversion\space
   Encapsulated Sketch LaTeX Package (\filemaintainer)]
 %    \end{macrocode}
-% Every option we don't understand is sent down to |graphics|.
-% Afterwards invoke the actual macro for each found and declared opton.
-% Having finished, stop scanning for tokens.
+% Every option we don't understand is sent down to |graphics|. In this
+% case that are all (hence the \textasteriskcentered) options, because
+% we do not declare a single one. Afterwards invoke the actual macro
+% for each found and declared opton. Having finished, stop scanning
+% for tokens. Eventually some other packages needed by \ESK{}, partly of
+% a minimum version, get specified.
 %    \begin{macrocode}
-%% Every option ("*") is passed down to the graphics package
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{graphics}}
 \ProcessOptions\relax
 \RequirePackage{graphics}[1994/12/15]
 \RequirePackage{verbatim}
 \RequirePackage{kvsetkeys}[2007/09/29]
 %    \end{macrocode}
-%
-
-
-% \begin{macro}{\eskwrite}
+% The characters "\%", "\{" and "\}" are somewhat special to \TeX. More
+% precicely are they used for comments and grouping respectively. \SK{}
+% uses them as well, for the same purposes. To allow convenient code
+% generation by using macros to produce the symbols, three macros get
+% defined:
+% \begin{macro}{\p@rcent}
+% That macro is used for creating comments. The \% sign is locally
+% defined as a common letter (category code 11) and create a global macro
+% using it\footnote{i.e. see {http://de.wikibooks.org/wiki/LaTeX-Wörterbuch:
+% \_TeX\_Primitiven:\_\%5Ccatcode} for details}. The \@ in the name of the
+% control sequence makes it only visible from inside the package\footnote{i. e.
+% see http://de.wikibooks.org/wiki/LaTeX-Wörterbuch:\_\@}.
 %    \begin{macrocode}
-% Define the \percent sign locally as a common letter and create a
-% global macro using it. That macro is used for creating comments.
-%% (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_TeX_Primitiven:_%5Ccatcode)
-%% and globally (but through the @ only visible inside the package (http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_@))
-%% define a percent sign macro (used for comments)
 {\catcode`\%=11\gdef\p@rcent{%}}
-% Since we need curly braces in Sketch, define macros for creating
-% them. This is done like in the |p@rcent| macro.
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\lc@rly}
+%   \begin{macro}{\rc@rly}
+% Curly braces are used for scope und group definitions in \SK. Just like
+% with the |\p@rcent| macro, we need to make them a common letter.
+% Unfortunately we need the curly braces to define a local scope for \TeX.
+% To come around this the characters ">" and "<" are locally defined to
+% be grouping characters (category code 1). To allow normal scope closing
+% we finally make the curly braces grouping characters again.
+%    \begin{macrocode}
 {\catcode`\>=1  \catcode`\<=2
  \catcode`\{=11 \catcode`\}=11
  \gdef\lc@rly>{<
  \gdef\rc@rly>}<
  \catcode`\{=1  \catcode`\}=2
 }
+%    \end{macrocode}
+%   \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\eskwrite}
 % Define a macro to write the contents of its first argument to a file.
+% If the boolean toggle |@eskio| is set to true, the passed argument is
+% written\footnote{see http://www.tug.org/utilities/plain/cseq.html\#write-rp}
+% out to the file referenced in |@outesk|. Normally \TeX{} does the
+% actual writing during a |\shipout| operation, but we force it to do it
+% immediately\footnote{see http://www.tug.org/utilities/plain/cseq.html\#immediate-rp}.
+% All directly following spaces on the input will be
+% eaten\footnote{see http://en.wikibooks.org/wiki/TeX/ignorespaces}.
+%    \begin{macrocode}
 \def\eskwrite#1{%
-  %% is the variable "@eskio" set?
   \if@eskio
-    %% write the contents of "#1" immediately, instead of waiting for
-    %% shipout
-    %% (http://www.tug.org/utilities/plain/cseq.html#immediate-rp)
-    %% where to write is stored in "\@outesk"
-    %% (http://www.tug.org/utilities/plain/cseq.html#write-rp)
     \immediate\write\@outesk{#1}%
   \fi
-  %% ignore all the space on the input that follow immediately
-  %% (http://en.wikibooks.org/wiki/TeX/ignorespaces)
   \ignorespaces}
+%
+% \begin{marco}{\eskwritetoken}
 % If a token list register should be put into a file, this macro should
-% be used.
+% be used. It will expand the token varible to its current contents.
+%    \begin{macrocode}
 \def\eskwritetoken#1{
-	\eskwrite{\the#1}
-}
-% Create a new private boolean toggle to reflect if file writing
-% is enabled and set it to true.
-\newif\if@eskio
-\@eskiotrue
-% Define the next free file handle to be referenced by private macro |\@outesk|
-%% but do not open it (example file open: \openout\@outesk=TEXTFILE.TXT)
-%% see: (http://books.google.de/books?id=bXLDwmIJNkUC&pg=PA283&lpg=PA283&dq=tex+%22\newwrite%22&source=bl&ots=xNXas4Y6Rz&sig=KrxZPqhl_0izHGvda9235RoyTHU&hl=de&ei=tKKGSszRGML6_AaNgaGWBw&sa=X&oi=book_result&ct=result&resnum=10#v=onepage&q=tex%20%22\newwrite%22&f=false)
-\newwrite\@outesk
+  \eskwrite{\the#1}}
 %    \end{macrocode}
 % \end{macro}
+%
+% Next a new private boolean toggle is defined. It is used to reflect if
+% file writing is enabled and set it to true.
+%    \begin{macrocode}
+\newif\if@eskio
+\@eskiotrue
+%    \end{macrocode}
+%
+% The next free output file handle will be referenced by the private macro
+% |\@outesk|. At this point no file is opened, but just an output channel
+% defined\footnote{e. g. see \textit{A TEX primer for scientists} by Stanley
+% A. Sawyer,Steven George Krantz on p. 283}. An example file open could now
+% look like: |\openout\@outesk=TEXTFILE.TXT|.
+%    \begin{macrocode}
+\newwrite\@outesk
+%    \end{macrocode}
 %
 % \begin{macro}{\eskfile}
 % This environment encloses each Sketch input file.  The single optional
@@ -901,7 +922,7 @@
 \usepackage{doc}
 \usepackage{amsmath}
 %    \end{macrocode}
-% The logos come out much nicer if you have |mflogo| installed:
+% The logos would come out much nicer if |mflogo| would support some more letters (i.e. k and K).
 %    \begin{macrocode}
 \def\ESK{\textsf{ESK}}%
 \def\SK{\textsf{Sketch}}%
@@ -947,6 +968,7 @@
 \let\origmacrocode\macrocode
 \def\macrocode{\hfuzz 5em\origmacrocode}
 \begin{document}
+  \makeatletter
   \DocInput{esk.dtx}
 \end{document}
 %</driver>
