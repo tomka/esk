@@ -620,31 +620,42 @@
 %    \end{macrocode}
 %   \end{macro}
 % \end{macro}
-
+%
+% The token list register storing the global settings of \SK{} is called
+% |\esk@globals| and defaults to \emph{language tikz}.
+%    \begin{macrocode}
 \newtoks\esk@globals
 \esk@globals={language tikz}
-
-%% define a public \eskglobals macro that replaces the contents
-%% of the internal token register \esk@globals with its argument
+%    \end{macrocode}
+%
+% \begin{macro}{\eskglobals}
+%   \begin{macro}{\eskaddtoglobals}
+% The macros |\eskglobals| and |\eskaddtoglobals| are there to set and
+% modify the private token list register |\esk@globals|. With them one
+% has control over the general settings of \SK. On adding, new settings
+% will be delimited by a comma.
+%    \begin{macrocode}
 \def\eskglobals#1{\esk@globals={#1}}
-%% define a public \eskaddtoglobals macro that appends its argument
-%% to the internal \esk@globals token register, delimited by a comma
 \def\eskaddtoglobals#1{\esk@globals=\expandafter{\the\esk@globals,#1}}
-
+%    \end{macrocode}
+%   \end{macro}
+% \end{macro}
+%
 % \begin{macro}{\endeskfile}
-% And here is how we close the |empfile| environment:
+% And here is how the |empfile| environment is closed. If there are
+% global settings they are written out. The last line of the generated
+% file will be an end statement in form of a comment. followed by a line
+% break. As a convention the macro keeping the base name of the file,
+% |\theeskfile|, is set to |\relax|. That indicates that no file is open.
+% To make that the true, the currently opened file (if any) is finally
+% closed.
 %    \begin{macrocode}
 \def\endeskfile{%
-  %% write global settings, if any
   \expandafter\ifx\expandafter*\the\esk@globals*\else
     \eskwrite{global \lc@rly\the\esk@globals\rc@rly }%
-  %\fi
-  %% write end statements to the file
+  \fi
   \eskwrite{\p@rcent\p@rcent\p@rcent\space the end.^^J}%
-  %% Like in intialization, let "\theeskfile" be the same as "\relax"
-  %% This an indicator of being outside of an eskfile environment.
   \let\theeskfile\relax
-  %% if a file is opened, close it.
   \if@eskio
     \immediate\closeout\@outesk
   \fi}
@@ -652,46 +663,77 @@
 % \end{macro}
 %
 % \begin{macro}{\esk}
+% The |esk| environment encloses \SK{} code that will be put into a file
+% for beeing later processed by \SK. First it (re-)defines the macro
+% |\esk@@name| with the environments argument. That argument is used as
+% the base name for the corresponding file and defaults to |\jobname|.
+% Then the internal macro |\esk@| produces a single esk graphic.
 %    \begin{macrocode}
-%% define a public macro to (re-)define "\esk@@name" with the argument
-%% (or the default: the job name ) and call internal \esk@ to produce a single
-%% esk graphic
 \newcommand{\esk}[1][\jobname]{%
   \def\esk@@name{#1}%
   \esk@}
 %    \end{macrocode}
 % \end{macro}
 %
+% Since the |esk| environment allows two optional parameters and only
+% one can have brackets, the second parametar is surrounded by panatheses.
+% A marco for an opening paranthesis is defined:
+%    \begin{macrocode}
 \let\leftparanthesis=(
+%    \end{macrocode}
 %
 % \begin{macro}{\esk@}
+% The private |\esk@| macro stores the immediately following token in
+% the macro |\next| and invokes |\esk@impl|.
 %    \begin{macrocode}
-%% define a private \esk@ macro
 \def\esk@{
-  %% save tho next token into \next
-  %% and invoke \esk@impl
-  \futurelet\next\esk@impl
-}
+  \futurelet\next\esk@impl}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\esk@impl}
+% Now that the following token is known in |\next| it is checked
+% if the second optional argument got passed. This is done by testing
+% if the next token is an opening paranthesis and depending on its
+% occurance |\esk@impl@Arg| or |\esk@impl@NoArg| is invoked. Since
+% we want to work with the content of the environment verbatim, we
+% have te get rid of |\else| and |\fi| in the input stream. This
+% can be achieved by just expanding them before calling the verbatim
+% handling macros.
+%    \begin{macrocode}
 \def\esk@impl{%
-  %% check if there is an optional eskdef list argument
   \ifx\next\leftparanthesis
     %% get rid of the \else by invoking \expandafter
     \expandafter\esk@impl@Arg
   \else
     %% get rid of the \fi by invoking \expandafter
     \expandafter\esk@impl@NoArg
-  \fi
-}
-%% invokes \esk@impl@Arg with empty argument
+  \fi}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\esk@impl@NoArg}
+%   \begin{macro}{\esk@impl@Arg}
+% The macro |\esk@impl@NoArg| just calls |\esk@impl@Arg| with an
+% empty argument.
+%    \begin{macrocode}
 \def\esk@impl@NoArg{\esk@impl@Arg()}
-%% the actual implementation
+%    \end{macrocode}
+% The following macro makes sure some preconditions are met by
+% invoking |\esk@start|. Afterwards |\esk@includegraphics| checks
+% if a \SK{} file should be generated or a \LaTeX{} file be included.
+% Finally the argument is parsed as a comma separated list to call
+% |\esk@def@processor| for each element found and the actual \SK{}
+% code verbatim processing is started with |\esk@cmds|. As verbatim
+% line processing macro "eskwritetoken" is passed as an argument.
+%    \begin{macrocode}
 \def\esk@impl@Arg(#1){%
   \esk@start%
   \esk@includegraphics{\theeskfile}%
-  %% process optional definition
-  \comma@parse{#1}{\esk@def@processor}
+  \comma@parse{#1}{\esk@def@processor}%
   \esk@cmds{eskwritetoken}}
 %    \end{macrocode}
+%   \end{macro}
 % \end{macro}
 %
 \def\esk@def@processor#1{
