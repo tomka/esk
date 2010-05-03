@@ -699,14 +699,12 @@
 % we want to work with the content of the environment verbatim, we
 % have te get rid of |\else| and |\fi| in the input stream. This
 % can be achieved by just expanding them before calling the verbatim
-% handling macros.
+% handling macros with |\expandafter|.
 %    \begin{macrocode}
 \def\esk@impl{%
   \ifx\next\leftparanthesis
-    %% get rid of the \else by invoking \expandafter
     \expandafter\esk@impl@Arg
   \else
-    %% get rid of the \fi by invoking \expandafter
     \expandafter\esk@impl@NoArg
   \fi}
 %    \end{macrocode}
@@ -715,17 +713,19 @@
 % \begin{macro}{\esk@impl@NoArg}
 %   \begin{macro}{\esk@impl@Arg}
 % The macro |\esk@impl@NoArg| just calls |\esk@impl@Arg| with an
-% empty argument.
+% empty argument. It is mainly there for readability.
 %    \begin{macrocode}
 \def\esk@impl@NoArg{\esk@impl@Arg()}
 %    \end{macrocode}
-% The following macro makes sure some preconditions are met by
-% invoking |\esk@start|. Afterwards |\esk@includegraphics| checks
-% if a \SK{} file should be generated or a \LaTeX{} file be included.
-% Finally the argument is parsed as a comma separated list to call
-% |\esk@def@processor| for each element found and the actual \SK{}
-% code verbatim processing is started with |\esk@cmds|. As verbatim
-% line processing macro "eskwritetoken" is passed as an argument.
+% The following macro, |\esk@impl@Arg|, expects one argument
+% surrounded by parantheses, namely a list of |eskdef| names.
+% It makes sure some preconditions are met by invoking |\esk@start|.
+% Afterwards |\esk@includegraphics| checks if a \SK{} file should
+% be generated or a \LaTeX{} file be included. Finally the argument
+% is parsed as a comma separated list to call |\esk@def@processor|
+% for each element found and the actual \SK{} code verbatim
+% processing is started with |\esk@cmds|. As the verbatim line
+% processing macro name "eskwritetoken" is passed as an argument.
 %    \begin{macrocode}
 \def\esk@impl@Arg(#1){%
   \esk@start%
@@ -736,51 +736,67 @@
 %   \end{macro}
 % \end{macro}
 %
+% \begin{macro}{esk@def@processor}
+% The macro |\esk@def@processor| gets expanded for every element
+% of the second optional argumenti of the |esk| environment. Here
+% every |eskdef| name of that list will be included in the current
+% file by invoking |\eskuse| for it.
+%    \begin{macrocode}
 \def\esk@def@processor#1{
-  \esk@use{#1}
-}
+  \esk@use{#1}}
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\esk@start}
+% A macro for preparing for a new \SK{} figure.
 %    \begin{macrocode}
-%% A macro for creating a new Sketch figure. The parameters
-%% are width and height of the figure.
 \def\esk@start{%
 %    \end{macrocode}
 % We can't use |\stepcounter| because of the |amstext| option of
-% AMS-\LaTeX{} disables it sometimes.
+% AMS-\LaTeX{} disables it sometimes. Instead we globally advance
+% the eskfig counter manually by one. Afterwards we call
+% |\esk@checkfile| to make sure a file is open. Finally we invoke
+% |\esk@@def| with our previously defined temporary esk file name
+% to generate new |\theeskfile| and |\theeskfig| alias macros for
+% the current figure.
 %    \begin{macrocode}
-  %% globally advance the eskfig counter manually by one
   \global\expandafter\advance\csname c@eskfig\endcsname \@ne
-  %% make sure that a sketch file is open
   \esk@checkfile
-  %% call \esk@@def with our prev. defined temporary esk file name 
-  %% and generate new \theeskfile and \theeskfile alias macros
-  \esk@@def{\esk@@name}%
-}
+  \esk@@def{\esk@@name}}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\esk@checkfile}
 % Make sure that a Sketch file is open, otherwise \emph{really}
-% obscure error messages are possible:
+% obscure error messages are possible. This is done by checking
+% if |\theeskfile| is the same as |\relax| (as defined during
+% initialization and file closing). If so, try to open a file
+% (again) and do the test again. If it still fails print and
+% produce an error.
 %    \begin{macrocode}
 \def\esk@checkfile{%
-  %% check if "\theeskfile" is the same as "\relax" (as defined for
-  %% initialization). If so, print and produce error.
   \ifx\theeskfile\relax
     \eskfile[\esk@@name.\arabic{eskfig}]
+  \fi
+  \ifx\theeskfile\relax
+    \errmessage{Could not open file "\esk@@name.\arabic{eskfig}.sk"!}
   \fi}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\esk@includegraphics}
+% If a file having \emph{.sk.tex} added to the base name exists
+% this macro will include it. To start a new paragraph if we are
+% in vertical mode and switch to horizontal mode |\leaveemode|
+% is called at the beginning. Then, if the file exists, pass its
+% name as an argument to |\input| (which expects the file to end
+% with \emph{.tex}). If there in no such file a message is typed
+% out to tell the user that the sketch files might need the actual
+% processing.
 %    \begin{macrocode}
 \def\esk@includegraphics#1{%
-  %% switch from vertical to horizontal mode
   \leavevmode
   \IfFileExists{#1.sk.tex}%
-    %% The actual file must heve the extension ".tex", "\input"
-    %% expects this.
     {\input{#1.sk.tex}}%
     {\typeout{%
       esk: File #1.sk.tex\space not found:^^J%
