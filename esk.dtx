@@ -26,7 +26,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% \CheckSum{406}
+% \CheckSum{403}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -471,7 +471,7 @@
 % \begin{macro}{\p@rcent}
 % That macro is used for creating comments. The \% sign is locally
 % defined as a common letter (category code 11) and create a global macro
-% using it. The \@ in the name of the control sequence makes it only visible
+% using it. The |@| in the name of the control sequence makes it only visible
 % from inside the
 %  package\footnote{see http://de.wikibooks.org/wiki/LaTeX-Wörterbuch:\_\@}.
 %    \begin{macrocode}
@@ -484,7 +484,7 @@
 % Curly braces are used for scope and group definitions in \SK. Just like
 % with the |\p@rcent| macro, we need to make them a common letter.
 % Unfortunately we need the curly braces to define a local scope for \TeX.
-% To come around this the characters ">" and "<" are locally defined to
+% To come around this the characters $>$ and $<$ are locally defined to
 % be grouping characters (category code 1). To allow normal scope closing
 % we finally make the curly braces grouping characters again.
 %    \begin{macrocode}
@@ -513,6 +513,8 @@
     \immediate\write\@outesk{#1}%
   \fi
   \ignorespaces}
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\eskwritetoken}
 % If a token list register should be put into a file, this macro should
@@ -550,9 +552,9 @@
   \def\theeskfile{#1}%
 %    \end{macrocode}
 % Open the Sketch file. If output is enabled, check if we're running under
-% AMS-\LaTeX and if that is the case turn off I/O during the first pass over
+% AMS-\LaTeX{} and if that is the case turn off I/O during the first pass over
 % equation environments. This is done by looking for |\ifmeasuring@| of
-% AMS-\LaTeX and, if found, replacing all "\if@eskio" checks with it. 
+% AMS-\LaTeX{} and, if found, replacing all |\if@eskio| checks with it. 
 %    \begin{macrocode}
   \if@eskio
     \@ifundefined{ifmeasuring@}%
@@ -564,7 +566,6 @@
 % a start comment is written to the new file.
 %    \begin{macrocode}
     \immediate\openout\@outesk=\theeskfile.sk\relax
-    %% And write start comment out immediately
     \eskwrite{\p@rcent\p@rcent\p@rcent\space \theeskfile.sk -- %
               do not edit, generated automatically by \jobname.tex}%
 %    \end{macrocode}
@@ -645,7 +646,7 @@
 % file will be an end statement in form of a comment. followed by a line
 % break. As a convention the macro keeping the base name of the file,
 % |\theeskfile|, is set to |\relax|. That indicates that no file is open.
-% To make that the true, the currently opened file (if any) is finally
+% To make that true, the currently opened file (if any) is finally
 % closed.
 %    \begin{macrocode}
 \def\endeskfile{%
@@ -788,7 +789,7 @@
 % in vertical mode and switch to horizontal mode |\leaveemode|
 % is called at the beginning. Then, if the file exists, pass its
 % name as an argument to |\input| (which expects the file to end
-% with \emph{.tex}). If there in no such file a message is typed
+% with \emph{.tex}). If there is no such file a message is typed
 % out to tell the user that the sketch files might need the actual
 % processing.
 %    \begin{macrocode}
@@ -906,7 +907,7 @@
     \errmessage{"\esk@@def@name" is already defined!}
   \fi
 %    \end{macrocode}
-% If a new |eskdef| name is gives a new token list register is
+% If a new |eskdef| name is given a new token list register is
 % created and named like the expansion of |\esk@@def@name|. It
 % is not necessary to tell \TeX{} that the new register will be
 % global, because \emph{new...} tokens act always globally.
@@ -1029,10 +1030,10 @@
 % Let |\stoken| be a space token:
 %    \begin{macrocode}
 \def\\{\let\stoken= } \\
-\def\stepone{\expandafter\futurelet\cs\steptwo}
 %    \end{macrocode}
 % And define the stepwise look-ahead macros:
 %    \begin{macrocode}
+\def\stepone{\expandafter\futurelet\cs\steptwo}
 \def\steptwo{\expandafter\ifx\cs\stoken\let\next=\stepthree
   \else\let\next=\nexttoken\fi \next}
 \def\stepthree{\afterassignment\stepone\let\next= }
@@ -1055,7 +1056,7 @@
 %    \end{macrocode}
 % The logos would come out much nicer if |mflogo| would support some
 % more letters (i.e. k and K). We don't have that and so we define
-% the logos that way:
+% the logos the following way:
 %    \begin{macrocode}
 \def\ESK{\textsf{ESK}}%
 \def\SK{\textsf{Sketch}}%
