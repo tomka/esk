@@ -21,15 +21,15 @@
 #
 ########################################################################
 
-VERSION = 0
-RELEASE = 2 
+VERSION = 1
+RELEASE = 0
 STATUS  = WIP
 
 ########################################################################
 
 # Directories
 prefix = $(HOME)
-texdir = $(prefix)/tex/inputs
+texdir = $(prefix)/texmf/inputs
 docdir = $(texdir)/doc
 
 # Commands
@@ -91,7 +91,12 @@ esk.drv eskman.drv: esk.sty
 
 esk.dvi: esk.dtx esk.drv esk.sty
 	-$(LATEX) $*.drv
-	for i in `ls *.sk`; do $(SK) -o "$$i.tex" "$$i"; done
+	for i in `ls *.sk`; do \
+		($(SK) -o "$$i.tex" "$$i" && \
+		cut -d "%" -f1 <"$$i.tex" >"$$i.tex.tmp" && \
+		rm "$$i.tex" && \
+		mv "$$i.tex.tmp" "$$i.tex") \
+	done
 	-$(LATEX) $*.drv
 	$(RUN_MAKEINDEX)
 	$(RESOLVE_XREF)
@@ -154,15 +159,6 @@ fileversion:
 	  rm -f esk.vtmp; \
 	else \
 	  mv esk.vtmp esk.dtx; \
-	fi
-
-commit: fileversion
-	@if test -n "$(M)"; then \
-	  echo "cvs commit -m '$(M)'"; cvs commit -m '$(M)'; \
-	  echo "cvs tag $(CVSTAG)"; cvs tag $(CVSTAG); \
-	  echo "cvs tag -b $(CVSTAG)_"; cvs tag -b $(CVSTAG)_; \
-	else \
-	  echo "usage: make commit M='<message>'" 1>&2; \
 	fi
 
 dist: $(distdir).tar.gz
