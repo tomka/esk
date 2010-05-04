@@ -402,7 +402,7 @@
 % \iffalse meta-comment
 %% TeX hints:
 %%   - @ is considered a normal letter in packages and classes
-%%   - There are 256 32Bit \count<num> registers (i. e. \count0=42),
+%%   - There are 256 32Bit \count<num> registers (i.e. \count0=42),
 %%     can be expanded with \the<register> (i.e. \the\count0)
 %%   - \relax ends scanning for tokens
 %%     (i.e. \count0=\macro 42 <> \count0=\macro\relax 42)
@@ -472,10 +472,9 @@
 % \begin{macro}{\p@rcent}
 % That macro is used for creating comments. The \% sign is locally
 % defined as a common letter (category code 11) and create a global macro
-% using it\footnote{i.e. see {http://de.wikibooks.org/wiki/LaTeX-Wörterbuch:
-% \_TeX\_Primitiven:\_\%5Ccatcode} for details}. The \@ in the name of the
-% control sequence makes it only visible from inside the package\footnote{i. e.
-% see http://de.wikibooks.org/wiki/LaTeX-Wörterbuch:\_\@}.
+% using it. The \@ in the name of the control sequence makes it only visible
+% from inside the
+%  package\footnote{see http://de.wikibooks.org/wiki/LaTeX-Wörterbuch:\_\@}.
 %    \begin{macrocode}
 {\catcode`\%=11\gdef\p@rcent{%}}
 %    \end{macrocode}
@@ -534,7 +533,7 @@
 %
 % The next free output file handle will be referenced by the private macro
 % |\@outesk|. At this point no file is opened, but just an output channel
-% defined\footnote{e. g. see \textit{A TEX primer for scientists} by Stanley
+% defined\footnote{see \textit{A TEX primer for scientists} by Stanley
 % A. Sawyer,Steven George Krantz on p. 283}. An example file open could now
 % look like: |\openout\@outesk=TEXTFILE.TXT|.
 %    \begin{macrocode}
@@ -584,7 +583,7 @@
 %    \end{macrocode}
 %
 % Define |\theeskfile|, later redefined with the name of the currently opened
-% file, to be |\relax| (i. e. stop reading tokens). This should be the value
+% file, to be |\relax| (i.e. stop reading tokens). This should be the value
 % if no file is opened.
 %    \begin{macrocode}
 \let\theeskfile\relax
@@ -811,7 +810,7 @@
 % which name is passed as an argument. That is done to reuse
 % the macro for |esk| and |eskdef| environments. The macros
 % in use for the line processing are |eskwrite| and
-% |esk@def@verbatim@handler| respectively. Due to the use of
+% |esk@def@verb@proc| respectively. Due to the use of
 % |\begingroup| \TeX{} enters a group that has to be terminated
 % by |\endgroup| and not by \}.
 %    \begin{macrocode}
@@ -925,17 +924,17 @@
 % defined alias for the new token list register.
 %    \begin{macrocode}
   \global\edef\esk@@def@reg{\csname\esk@@def@name\endcsname}
-  \esk@cmds{esk@def@verbatim@handler}}
+  \esk@cmds{esk@def@verb@proc}}
   \global\def\esk@@def@reg{}
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\esk@def@verbatim@handler}
+% \begin{macro}{\esk@def@verb@proc}
 % The verbatim line processor for the |eskdef| environment first
 % creates a local alias for the new token list register. This is
 % done to make the code more readable.
 %    \begin{macrocode}
-\def\esk@def@verbatim@handler#1{%
+\def\esk@def@verb@proc#1{%
   \expandafter\let\expandafter\token@reg\esk@@def@reg
 %    \end{macrocode}
 % If the token list register is empty it is filled with the
@@ -947,7 +946,8 @@
 % If not, the verbatim line is appended on a new line.
 %    \begin{macrocode}
   \else
-    \global\esk@@def@reg=\expandafter{\the\expandafter\token@reg\expandafter^^J\the#1}
+    \global\esk@@def@reg=\expandafter{%
+      \the\expandafter\token@reg\expandafter^^J\the#1}
   \fi}
 %    \end{macrocode}
 % \end{macro}
@@ -999,7 +999,8 @@
   \def\esk@@def@name{esk@def:#1}%
   \expandafter\ifcsname\esk@@def@name\endcsname
     \eskwrite{\p@rcent\p@rcent\space included definition: #1}%
-    \expandafter\eskwritetoken\expandafter{\expandafter\csname\esk@@def@name\endcsname}
+    \expandafter\eskwritetoken\expandafter{%
+     \expandafter\csname\esk@@def@name\endcsname}
     \eskwrite{^^J}
   \else
     \errmessage{esk: "#1" is undefined!}
