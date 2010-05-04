@@ -1,0 +1,45 @@
+# README,v 1.0, 2010/05/04 14:00:24, Tom Kazimiers
+########################################################################
+
+    This is esk, a package for encapsulated Sketch pictures in LaTeX.
+    This is very useful for keeping illustrations in sync with the
+    text. It also frees the user from inventing descriptive names
+    for Sketch files that fit into the confines of file system
+    conventions.
+
+    You are invited to share, use, abuse, and improve it, see the file
+    COPYING for details. This package itself used emp by Thorstes Ohl
+    as a starting point.
+
+    Enjoy,
+    -Tom
+
+########################################################################
+
+    Comments, bug reports and improvements are welcome at:
+
+        tom@voodoo-arts.net
+
+    New versions can be found in:
+
+        voodoo-arts.net/pub/tex/esk
+
+########################################################################
+
+NEWS for Version 1.0
+
+    *  First version released
+
+########################################################################
+
+WARNING:
+
+    If LaTeX fails with `Unknown graphics extension: 3', you have a
+    severely out-of-date graphics.sty file (LaTeX will have issued a
+    warning in this case).  There has been a change to the user
+    interface, which makes it very hard to support both versions.
+
+########################################################################
+# Local Variables:
+# mode:indented-text
+# End:
