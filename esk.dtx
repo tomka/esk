@@ -200,7 +200,7 @@
 %
 % \DescribeMacro{\eskaddtoprelude}
 % Add to the \SK{} prelude.
-% E. g.~|\eskaddtoprelude{def O (0,0,0)}| makes sure the varible O
+% E. g.~|\eskaddtoprelude{def O (0,0,0)}| makes sure the variable O
 % is available in all |esk| environments (and thus in every generated
 % \SK{} file). Of cause, this could also be achieved with |Eskimo|.
 %
@@ -421,7 +421,7 @@
 % It's is good practice to identify this version of the document style
 % option.  We do this by parsing an RCS |Id| string and storing the
 % result in the conventional \TeX{} control sequences. The parsing macro
-% is only visible lecally (within the surrounding scope), but generated
+% is only visible locally (within the surrounding scope), but generated
 % control sequences like |\filename| are defined globally (due to the
 % use of |\gdef|):
 %    \begin{macrocode}
@@ -454,7 +454,7 @@
 % Every option we don't understand is sent down to |graphics|. In this
 % case that are all (hence the \textasteriskcentered) options, because
 % we do not declare a single one. Afterwards invoke the actual macro
-% for each found and declared opton. Having finished, stop scanning
+% for each found and declared option. Having finished, stop scanning
 % for tokens. Eventually some other packages needed by \ESK{}, partly of
 % a minimum version, get specified.
 %    \begin{macrocode}
@@ -465,7 +465,7 @@
 \RequirePackage{kvsetkeys}[2007/09/29]
 %    \end{macrocode}
 % The characters "\%", "\{" and "\}" are somewhat special to \TeX. More
-% precicely are they used for comments and grouping respectively. \SK{}
+% precisely are they used for comments and grouping respectively. \SK{}
 % uses them as well, for the same purposes. To allow convenient code
 % generation by using macros to produce the symbols, three macros get
 % defined:
@@ -483,7 +483,7 @@
 %
 % \begin{macro}{\lc@rly}
 %   \begin{macro}{\rc@rly}
-% Curly braces are used for scope und group definitions in \SK. Just like
+% Curly braces are used for scope and group definitions in \SK. Just like
 % with the |\p@rcent| macro, we need to make them a common letter.
 % Unfortunately we need the curly braces to define a local scope for \TeX.
 % To come around this the characters ">" and "<" are locally defined to
@@ -502,7 +502,7 @@
 %
 % \begin{macro}{\eskwrite}
 % Define a macro to write the contents of its first argument to a file.
-% If the boolean toggle |@eskio| is set to true, the passed argument is
+% If the Boolean toggle |@eskio| is set to true, the passed argument is
 % written\footnote{see http://www.tug.org/utilities/plain/cseq.html\#write-rp}
 % out to the file referenced in |@outesk|. Normally \TeX{} does the
 % actual writing during a |\shipout| operation, but we force it to do it
@@ -516,16 +516,16 @@
   \fi
   \ignorespaces}
 %
-% \begin{marco}{\eskwritetoken}
+% \begin{macro}{\eskwritetoken}
 % If a token list register should be put into a file, this macro should
-% be used. It will expand the token varible to its current contents.
+% be used. It will expand the token variable to its current contents.
 %    \begin{macrocode}
 \def\eskwritetoken#1{
   \eskwrite{\the#1}}
 %    \end{macrocode}
 % \end{macro}
 %
-% Next a new private boolean toggle is defined. It is used to reflect if
+% Next a new private Boolean toggle is defined. It is used to reflect if
 % file writing is enabled and set it to true.
 %    \begin{macrocode}
 \newif\if@eskio
@@ -544,8 +544,8 @@
 % \begin{macro}{\eskfile}
 % This environment encloses each \SK{} input file.  The single optional
 % argument gives the name of the file and defaults to |\jobname|. This will
-% probably not be used explicitely when defining esk figures. It is invoked
-% automitically with an appropriate name for a figure. The macro |\theeskfile|
+% probably not be used explicitly when defining esk figures. It is invoked
+% automatically with an appropriate name for a figure. The macro |\theeskfile|
 % gets locally defined and stores the base name for a file.
 %    \begin{macrocode}
 \newcommand{\eskfile}[1][\jobname]{%
@@ -572,8 +572,8 @@
 %    \end{macrocode}
 % The |esk@prelude| token list register stores a prelude that should be put at
 % the beginning of the new file. If the register is empty, the expansion of it
-% (|\the\esk@prelude|) will be empty. This mens the |\ifx| condition is met,
-% because the actual ckeck is now if |*| equals |*|. Hence the |\else| branch
+% (|\the\esk@prelude|) will be empty. This means the |\ifx| condition is met,
+% because the actual check is now if |*| equals |*|. Hence the |\else| branch
 % will \emph{not} be called. If the token register is not empty (and does not
 % start with an asterisk) the |\else| branch is used..
 %    \begin{macrocode}
@@ -613,7 +613,7 @@
 %    \end{macrocode}
 % Define a public macro that appends its argument to the internal
 % |\esk@prelude| token list register. The text is added on a new line.
-% This is accomplished by using |^^J|, a replacement ascii representation
+% This is accomplished by using |^^J|, a replacement ASCII representation
 % for LF (line feed)\footnote{e.g. see: http://www.torsten-horn.de/techdocs/ascii.htm}.
 %    \begin{macrocode}
 \def\eskaddtoprelude#1{\esk@prelude=\expandafter{\the\esk@prelude^^J#1}}
@@ -664,7 +664,7 @@
 %
 % \begin{macro}{\esk}
 % The |esk| environment encloses \SK{} code that will be put into a file
-% for beeing later processed by \SK. First it (re-)defines the macro
+% for being later processed by \SK. First it (re-)defines the macro
 % |\esk@@name| with the environments argument. That argument is used as
 % the base name for the corresponding file and defaults to |\jobname|.
 % Then the internal macro |\esk@| produces a single esk graphic.
@@ -676,8 +676,8 @@
 % \end{macro}
 %
 % Since the |esk| environment allows two optional parameters and only
-% one can have brackets, the second parametar is surrounded by panatheses.
-% A marco for an opening paranthesis is defined:
+% one can have brackets, the second parameter is surrounded by parentheses.
+% A macro for an opening parenthesis is defined:
 %    \begin{macrocode}
 \let\leftparanthesis=(
 %    \end{macrocode}
@@ -694,10 +694,10 @@
 % \begin{macro}{\esk@impl}
 % Now that the following token is known in |\next| it is checked
 % if the second optional argument got passed. This is done by testing
-% if the next token is an opening paranthesis and depending on its
-% occurance |\esk@impl@Arg| or |\esk@impl@NoArg| is invoked. Since
+% if the next token is an opening parenthesis and depending on its
+% occurrence |\esk@impl@Arg| or |\esk@impl@NoArg| is invoked. Since
 % we want to work with the content of the environment verbatim, we
-% have te get rid of |\else| and |\fi| in the input stream. This
+% have to get rid of |\else| and |\fi| in the input stream. This
 % can be achieved by just expanding them before calling the verbatim
 % handling macros with |\expandafter|.
 %    \begin{macrocode}
@@ -718,7 +718,7 @@
 \def\esk@impl@NoArg{\esk@impl@Arg()}
 %    \end{macrocode}
 % The following macro, |\esk@impl@Arg|, expects one argument
-% surrounded by parantheses, namely a list of |eskdef| names.
+% surrounded by parentheses, namely a list of |eskdef| names.
 % It makes sure some preconditions are met by invoking |\esk@start|.
 % Afterwards |\esk@includegraphics| checks if a \SK{} file should
 % be generated or a \LaTeX{} file be included. Finally the argument
@@ -738,7 +738,7 @@
 %
 % \begin{macro}{esk@def@processor}
 % The macro |\esk@def@processor| gets expanded for every element
-% of the second optional argumenti of the |esk| environment. Here
+% of the second optional argument of the |esk| environment. Here
 % every |eskdef| name of that list will be included in the current
 % file by invoking |\eskuse| for it.
 %    \begin{macrocode}
@@ -808,7 +808,7 @@
 % \begin{macro}{\esk@cmds}
 % The macro |\esk@cmds| gets the |esk| environments content by
 % using the verbatim package. Each line is processed by a macro
-% whichs name is passed as an argument. That is done to reuse
+% which name is passed as an argument. That is done to reuse
 % the macro for |esk| and |eskdef| environments. The macros
 % in use for the line processing are |eskwrite| and
 % |esk@def@verbatim@handler| respectively. Due to the use of
@@ -845,7 +845,7 @@
     \catcode`\^^M\active
 %    \end{macrocode}
 % Since we use the verbatim package |\verbatim@processline| is called
-% after each line. We redifine it to do what we would like it to do:
+% after each line. We redefine it to do what we would like it to do:
 % Process the line with the macro with the name passed as argument..
 % The current line is available in |\verbatim@line|, a token register
 % \footnote{see: Latex hacks by Anselm Lingnau, p. 43 }.
@@ -898,7 +898,7 @@
 % \end{macro}
 %
 % \begin{macro}{\esk@def}
-% The |\esk@def| macro relies on |\esk@@def@name| beeing defined
+% The |\esk@def| macro relies on |\esk@@def@name| being defined
 % previously. At the beginning it checks if that name is already
 % registered by looking for a control sequence with the defined
 % name. If so, an error message is produced.
@@ -939,7 +939,7 @@
   \expandafter\let\expandafter\token@reg\esk@@def@reg
 %    \end{macrocode}
 % If the token list register is empty it is filled with the
-% current verbutem line.
+% current verbatim line.
 %    \begin{macrocode}
   \expandafter\ifx\expandafter*\the\token@reg*
     \global\esk@@def@reg=\expandafter{\the#1}
@@ -987,14 +987,13 @@
 %
 % \begin{macro}{\esk@use}
 % The |\esk@use| macro appends an \ESK{} \SK{} code definition
-% defined by |\eskdef|, ito the currently defined file. After
+% defined by |\eskdef|, into the currently defined file. After
 % creating an alias macro for the argument passed is is made
-% shure that the definition actually exists. If not an error
+% sure that the definition actually exists. If not an error
 % message is produced. If there is a token list register, named
 % like passed as argument, a short describing comment is written.
 % Further, the register is written as token to the file. The
 % file writing is finished with a new line.
-% the content of the al
 %    \begin{macrocode}
 \def\esk@use#1{%
   \def\esk@@def@name{esk@def:#1}%
@@ -1012,7 +1011,7 @@
 % \begin{macro}{\tok@newtoks}
 % Since |\newtoks| is an |\outer| macro, it is not allowed in definitions.
 % Because we are in the need of creating token list registers on the
-% fly, we define a wrapper. It lets \TeX{} costruct the |\newtoks| call:
+% fly, we define a wrapper. It lets \TeX{} construct the |\newtoks| call:
 %    \begin{macrocode}
 \def\tok@newtoks{
   \csname newtoks\endcsname}
@@ -1055,7 +1054,7 @@
 \usepackage{amsmath}
 %    \end{macrocode}
 % The logos would come out much nicer if |mflogo| would support some
-% more letters (i.e. k and K). We dont't have that and so we define
+% more letters (i.e. k and K). We don't have that and so we define
 % the logos that way:
 %    \begin{macrocode}
 \def\ESK{\textsf{ESK}}%
