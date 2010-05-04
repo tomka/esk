@@ -166,7 +166,6 @@ snap: esk-current.tar.gz
 
 $(distdir).tar.gz:
 	rm -fr $(distdir) $(distdir).tmp
-	cvs export -r $(CVSTAG) -d $(distdir).tmp esk
 	mkdir $(distdir)
 	(cd ./$(distdir).tmp && \
          make $(DISTFILES) && \
