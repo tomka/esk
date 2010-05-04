@@ -806,70 +806,91 @@
 % \end{macro}
 %
 % \begin{macro}{\esk@cmds}
-% Write the Sketch code to a target. This could be any macro taking one argument. In use are |eskwrite| and |esk@def@verbatim@handler|.
+% The macro |\esk@cmds| gets the |esk| environments content by
+% using the verbatim package. Each line is processed by a macro
+% whichs name is passed as an argument. That is done to reuse
+% the macro for |esk| and |eskdef| environments. The macros
+% in use for the line processing are |eskwrite| and
+% |esk@def@verbatim@handler| respectively. Due to the use of
+% |\begingroup| \TeX{} enters a group that has to be terminated
+% by |\endgroup| and not by \}.
 %    \begin{macrocode}
 \newcommand{\esk@cmds}[1]{%
-  %% create a new environment
   \begingroup
-    %% \@bsphack ... \@esphack
-    %%     used by macros such as \index and \begin{@float} ... \end{@float}
-    %%     that want to be invisible -- i.e.,
-    %%     not leave any extra space when used in the middle of text.  Such
-    %%     a macro should begin with \@bsphack and end with \@esphack
-    %%     The macro in question should not create any text, nor change the
-    %%     mode
+%    \end{macrocode}
+% The macros |\@bsphack| ... |\@esphack| are used by macros such as
+% |\index| and |\begin{@float}| ... |\end{@float}| that want to be
+% invisible -- i.e. not leave any extra space when used in the
+% middle of text.  Such a macro should begin with |\@bsphack| and
+% end with |\@esphack|. The macro in question should not create any
+% text, nor change the mode.
+%    \begin{macrocode}
     \@bsphack
-    %% defuse latex special characters:
-    %% \dospeciels contains a list of special characters of the form
-    %% "\do\ \do\\\do\{\do\}...". If one (re-)defines the "\do" macro
-    %% one can execute a macro on all of them. In our case we define
-    %% "\do" with "\@makeother" that assigns "\catcode 12" (non-letter),
-    %% thus they get normal characters without any special meaning.
-    %% Due to the environment those changes are local.
+%    \end{macrocode}
+% The next thing to do is to defuse \LaTeX{}' special characters:
+% |\dospeciels| expands to a list of special characters of the form
+% |\do\ \do\\ \do\{ \do\}|.... If one (re-)defines the "|\do|" macro
+% one can execute a macro on all of them. In our case we define
+% |\do| to be |\@makeother|. That assigns category code 12
+% (non-letter) to all special characters, thus they get normal
+% characters without any special meaning. Due to the environment
+% those changes are local.
+%    \begin{macrocode}
     \let\do\@makeother\dospecials
-    %% ^^M is the ascii representation of CR (carriage return). Make it
-    %% an active character. Thus a macro with the name "^^M" can now be
-    %% defined.
+%    \end{macrocode}
+% |^^M| is the ASCII representation of CR (carriage return). With
+% the following line we make it an active character. Thus a macro
+% with the name |^^M| can now be defined.
+%    \begin{macrocode}
     \catcode`\^^M\active
-    %% Since we use the verbatim package "\verbatim@processline" is called
-    %% after each line. We redifine it to do what we would like it to do
-    %% (the current line is available in "\verbatim@line", a token register):
-    %% Write the current line into the esk file.
-    %% from: Latex hacks, p. 43 of Anselm Lingnau
+%    \end{macrocode}
+% Since we use the verbatim package |\verbatim@processline| is called
+% after each line. We redifine it to do what we would like it to do:
+% Process the line with the macro with the name passed as argument..
+% The current line is available in |\verbatim@line|, a token register
+% \footnote{see: Latex hacks by Anselm Lingnau, p. 43 }.
+%    \begin{macrocode}
     \def\verbatim@processline{\csname#1\endcsname{\verbatim@line}}%
-    %% Enter the real verbatim mode, from here on _all_ characters have
-    %% lost their special meaning (if they had any).
+%    \end{macrocode}
+% Enter the real verbatim mode. From here on \emph{all} characters
+% have lost their special meaning (if they had any).
+%    \begin{macrocode}
     \verbatim@start}%
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\endesk@cmds}
+% To end the invisible environment and the group started by
+% |\esk@cmds|, this macro has to be used.
 %    \begin{macrocode}
 \def\endesk@cmds{%
-    %% end invisible environment (see \esk@cmds)
     \@esphack
   \endgroup}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\endesk}
+% This macro triggers the termination of the verbatim reading and
+% closes the current file.
 %    \begin{macrocode}
 \def\endesk{%
-  %% end esk input environment
   \endesk@cmds
-  %% close the current file
-  \endeskfile
-  }
+  \endeskfile}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\eskdef}
+% An |eskdef| environment allows to store blocks of \SK{} code in
+% token list registers for using them in |esk| environments. The
+% macro has one parameter, the name of the definition. First a
+% private and local name for the new block is defined. Then
+% |\esk@def| checks if the name is already there and does the
+% rest.
+%% \iffalse TODO: Make it more robust by remembering old name
+%% and setting it back afterwards (if any), so it can
+%% be used in esk environments \fi
 %    \begin{macrocode}
 \newcommand{\eskdef}[1]{%
-  %% TODO: Make it more robust by remembering old name
-  %% and setting it back afterwards (if any), so it can
-  %% be used in esk environments
-
   %% Define a new name
   \def\esk@@def@name{esk@def:#1}%
   \esk@def}
@@ -877,80 +898,109 @@
 % \end{macro}
 %
 % \begin{macro}{\esk@def}
+% The |\esk@def| macro relies on |\esk@@def@name| beeing defined
+% previously. At the beginning it checks if that name is already
+% registered by looking for a control sequence with the defined
+% name. If so, an error message is produced.
 %    \begin{macrocode}
 \def\esk@def{%
-  %% Test if the name is already registered
   \expandafter\ifcsname\esk@@def@name\endcsname
-    \rrrmessage{"\esk@@def@name" is already defined!}
+    \errmessage{"\esk@@def@name" is already defined!}
   \fi
-  %% Create new token registers named like the
-  %% expansion of \esk@@def@name
-  %% new... tokens act always globally
-  \global\expandafter\tok@newtoks\csname\esk@@def@name\endcsname
-  %% Create/Override a global definition "\esk@@def@reg" containing
-  %% our new token register. Unfortunately, this works only with
-  %% a global definition.
+%    \end{macrocode}
+% If a new |eskdef| name is gives a new token list register is
+% created and named like the expansion of |\esk@@def@name|. It
+% is not necessary to tell \TeX{} that the new register will be
+% global, because \emph{new...} tokens act always globally.
+% Unfortunately |\newtoks| is an |\outer| macro and we use the
+% wrapper |\tok@newtoks| (see below) to call it.
+%    \begin{macrocode}
+  \expandafter\tok@newtoks\csname\esk@@def@name\endcsname
+%    \end{macrocode}
+% Create or override a global definition |\esk@@def@reg|
+% containing our new token register. Unfortunately, this works only
+% with a global definition. Afterwards the verbatim reading of the
+% environment is started with a different verbatim line processor as
+% before. Finally the macro ends with removing the previously
+% defined alias for the new token list register.
+%    \begin{macrocode}
   \global\edef\esk@@def@reg{\csname\esk@@def@name\endcsname}
-  %% call the verbatim reading of the environment
   \esk@cmds{esk@def@verbatim@handler}}
-  %% clear the temp token list register alias
   \global\def\esk@@def@reg{}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\esk@def@verbatim@handler}
+% The verbatim line processor for the |eskdef| environment first
+% creates a local alias for the new token list register. This is
+% done to make the code more readable.
 %    \begin{macrocode}
 \def\esk@def@verbatim@handler#1{%
-  %% create a local alias for the token register
   \expandafter\let\expandafter\token@reg\esk@@def@reg
-
+%    \end{macrocode}
+% If the token list register is empty it is filled with the
+% current verbutem line.
+%    \begin{macrocode}
   \expandafter\ifx\expandafter*\the\token@reg*
-    %% if the token register is empty, override it...
     \global\esk@@def@reg=\expandafter{\the#1}
+%    \end{macrocode}
+% If not, the verbatim line is appended on a new line.
+%    \begin{macrocode}
   \else
-    %% ...otherwise append the parameter to current token register
     \global\esk@@def@reg=\expandafter{\the\expandafter\token@reg\expandafter^^J\the#1}
-  \fi
-}
+  \fi}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\endeskdef}
+% On ending an |eskdef| environment |\endeskdef| is expanded. Here,
+% its only purpose is to invoke the macro ending the verbatim
+% input environment.
 %    \begin{macrocode}
 \def\endeskdef{
-  %% end esk input environment
   \endesk@cmds}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\esk@@def}
+% A macro which takes a file name as argument to globally define
+% new macros |\esk@k:f:<arg>| and |\esk@k:c:<arg>| which expand
+% to |\theeskfile| and |\theeskfig| respectively.
 %    \begin{macrocode}
-%% a macro which takes a file name as argument to
-%% globally define new macros "esk@k:f:<arg>" and
-%% "esk@k:c:<arg>" which have the replacements
-%% \theeskfile and \theeskfig respectively.
 \def\esk@@def#1{%
   \global\e@namedef{esk@k:f:#1}{\theeskfile}%
   \global\e@namedef{esk@k:c:#1}{\theeskfig}}
-%% a macro which defines a new macro with the name of the
-%% argument (generated by \expandafter and \csname..,) and
-%% expands the following tokens (the new macros body) due
-%% to the use of \edef dynamically
-\def\e@namedef#1{\expandafter\edef\csname #1\endcsname}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\e@namedef}
+% A macro which defines a new macro with the name of the
+% argument. This is done in use of |\expandafter| and
+% |\csname|...|\endcsname|. The new macro expands to the
+% following group, i.e. the new macros body. Due to the
+% use of |\edef| this happens dynamically.
+%    \begin{macrocode}
+\def\e@namedef#1{%
+  \expandafter\edef\csname #1\endcsname}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\esk@use}
+% The |\esk@use| macro appends an \ESK{} \SK{} code definition
+% defined by |\eskdef|, ito the currently defined file. After
+% creating an alias macro for the argument passed is is made
+% shure that the definition actually exists. If not an error
+% message is produced. If there is a token list register, named
+% like passed as argument, a short describing comment is written.
+% Further, the register is written as token to the file. The
+% file writing is finished with a new line.
+% the content of the al
 %    \begin{macrocode}
 \def\esk@use#1{%
   \def\esk@@def@name{esk@def:#1}%
-  %% Test if the name is registered
   \expandafter\ifcsname\esk@@def@name\endcsname
-    %% write describing comment as prelude to definiton include
     \eskwrite{\p@rcent\p@rcent\space included definition: #1}%
-    %% write the contents of the token into the file
     \expandafter\eskwritetoken\expandafter{\expandafter\csname\esk@@def@name\endcsname}
-    %% write trailing line break to make result look nicer
     \eskwrite{^^J}
   \else
     \errmessage{esk: "#1" is undefined!}
@@ -961,24 +1011,36 @@
 %
 % \begin{macro}{\tok@newtoks}
 % Since |\newtoks| is an |\outer| macro, it is not allowed in definitions.
-% Because of that we define a wrapper:
+% Because we are in the need of creating token list registers on the
+% fly, we define a wrapper. It lets \TeX{} costruct the |\newtoks| call:
 %    \begin{macrocode}
 \def\tok@newtoks{
   \csname newtoks\endcsname}
-%</style>
 %    \end{macrocode}
 % \end{macro}
 %
 %
+% \begin{macro}{\futurespacelet}
+% A special version of the |\futurelet| macro. It is taken from Donald. E.
+% Knuths \emph{\TeX{}book} and behaves like |\futurelet|, but ignores spaces.
+%    \begin{macrocode}
 \def\futurenospacelet#1{\def\cs{#1}%
   \afterassignment\stepone\let\nexttoken= }
-\def\\{\let\stoken= } \\ % now \stoken is a space tokes
+%    \end{macrocode}
+% Let |\stoken| be a space token:
+%    \begin{macrocode}
+\def\\{\let\stoken= } \\
 \def\stepone{\expandafter\futurelet\cs\steptwo}
+%    \end{macrocode}
+% And define the stepwise look-ahead macros:
+%    \begin{macrocode}
 \def\steptwo{\expandafter\ifx\cs\stoken\let\next=\stepthree
   \else\let\next=\nexttoken\fi \next}
 \def\stepthree{\afterassignment\stepone\let\next= }
-%
-%
+%</style>
+%    \end{macrocode}
+% \end{macro}
+
 % \Finale
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
