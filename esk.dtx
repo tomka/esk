@@ -2,7 +2,7 @@
 %
 % esk.dtx - Encapsulated MetaPost for LaTeX(2e)
 %
-% Copyright (C) 2010 by tom@voodoo-arts.net
+% Copyright (C) 2010 by Tom Kazimiers (tom@voodoo-arts.net)
 %
 % Esk is free software; you can redistribute it and/or modify it
 % under the terms of the GNU General Public License as published by 
@@ -26,7 +26,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-%% \CheckSum{403}
+%% \CheckSum{397}
 %% \CharacterTable
 %%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
 %%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
@@ -418,7 +418,7 @@
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
-% \changes{v0.9}{2010/04/24}{Version 0.9}
+% \changes{v1.0}{2010/05/05}{Version 1.0 Release}
 %
 % This project is greatly inspired and based on EMP. EMP is a LaTeX package
 % to provide a convenient way to work with metapost files and code from
@@ -465,7 +465,7 @@
    \gdef\filerevision{#3}%
    \gdef\filedate{#4}%
    \gdef\filemaintainer{#6}}%
-\RCS $Id: esk.dtx,v 1.0 2010/05/04 21:14:41 kazimiers Exp $ \endRCS}%
+\RCS $Id: esk.dtx,v 1.0 2010/05/05 01:23:42 kazimiers Exp $ \endRCS}%
 %    \end{macrocode}
 % Make clear what LaTeX version is needed:
 %    \begin{macrocode}
@@ -476,16 +476,10 @@
 \ProvidesPackage{esk}[\filedate\space\fileversion\space
   Encapsulated Sketch LaTeX Package (\filemaintainer)]
 %    \end{macrocode}
-% Every option we don't understand is sent down to |graphics|. In this
-% case that are all (hence the \textasteriskcentered) options, because
-% we do not declare a single one. Afterwards invoke the actual macro
-% for each found and declared option. Having finished, stop scanning
-% for tokens. Eventually some other packages needed by \ESK{}, partly of
-% a minimum version, get specified.
+% We do not declare options for this package, so we do not need to
+% invoke processing for found ones. Some other packages needed by
+% \ESK{}, partly of a minimum version, get specified.
 %    \begin{macrocode}
-\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{graphics}}
-\ProcessOptions\relax
-\RequirePackage{graphics}[1994/12/15]
 \RequirePackage{verbatim}
 \RequirePackage{kvsetkeys}[2007/09/29]
 %    \end{macrocode}
@@ -1089,9 +1083,8 @@
 \def\MP{\textsf{META}\-\textsf{POST}}%
 
 %    \end{macrocode}
-% Protect against certain obsolete versions of the |graphics| and the |kvsetkeys| package:
+% Protect against certain outdated versions of the |kvsetkeys| package:
 %    \begin{macrocode}
-\usepackage{graphics}[1994/12/15]
 \usepackage{kvsetkeys}[2007/09/29]
 \usepackage{tikz}
 \usepackage{esk}
