@@ -98,6 +98,7 @@ esk.dvi: esk.dtx esk.drv esk.sty
 		mv "$$i.tex.tmp" "$$i.tex") \
 	done
 	-$(LATEX) $*.drv
+	pdflatex $*.drv
 	$(RUN_MAKEINDEX)
 	$(RESOLVE_XREF)
 
