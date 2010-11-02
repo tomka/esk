@@ -26,7 +26,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-%% \CheckSum{397}
+%% \CheckSum{399}
 %% \CharacterTable
 %%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
 %%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
@@ -540,7 +540,7 @@
 % If a token list register should be put into a file, this macro should
 % be used. It will expand the token variable to its current contents.
 %    \begin{macrocode}
-\def\eskwritetoken#1{
+\def\eskwritetoken#1{%
   \eskwrite{\the#1}}
 %    \end{macrocode}
 % \end{macro}
@@ -698,14 +698,14 @@
 % one can have brackets, the second parameter is surrounded by parentheses.
 % A macro for an opening parenthesis is defined:
 %    \begin{macrocode}
-\let\leftparanthesis=(
+\let\leftparanthesis=(%
 %    \end{macrocode}
 %
 % \begin{macro}{\esk@}
 % The private |\esk@| macro stores the immediately following token in
 % the macro |\next| and invokes |\esk@impl|.
 %    \begin{macrocode}
-\def\esk@{
+\def\esk@{%
   \futurelet\next\esk@impl}
 %    \end{macrocode}
 % \end{macro}
@@ -761,7 +761,7 @@
 % every |eskdef| name of that list will be included in the current
 % file by invoking |\eskuse| for it.
 %    \begin{macrocode}
-\def\esk@def@processor#1{
+\def\esk@def@processor#1{%
   \esk@use{#1}}
 %    \end{macrocode}
 % \end{macro}
@@ -813,6 +813,7 @@
 % out to tell the user that the sketch files might need the actual
 % processing.
 %    \begin{macrocode}
+\newsavebox{\eskbox}
 \def\esk@includegraphics#1{%
   \leavevmode
   \IfFileExists{#1.sk.tex}%
@@ -960,7 +961,7 @@
 % If the token list register is empty it is filled with the
 % current verbatim line.
 %    \begin{macrocode}
-  \expandafter\ifx\expandafter*\the\token@reg*
+  \expandafter\ifx\expandafter*\the\token@reg*%
     \global\esk@@def@reg=\expandafter{\the#1}
 %    \end{macrocode}
 % If not, the verbatim line is appended on a new line.
@@ -977,7 +978,7 @@
 % its only purpose is to invoke the macro ending the verbatim
 % input environment.
 %    \begin{macrocode}
-\def\endeskdef{
+\def\endeskdef{%
   \endesk@cmds}
 %    \end{macrocode}
 % \end{macro}
@@ -1034,7 +1035,7 @@
 % Because we are in the need of creating token list registers on the
 % fly, we define a wrapper. It lets \TeX{} construct the |\newtoks| call:
 %    \begin{macrocode}
-\def\tok@newtoks{
+\def\tok@newtoks{%
   \csname newtoks\endcsname}
 %    \end{macrocode}
 % \end{macro}
